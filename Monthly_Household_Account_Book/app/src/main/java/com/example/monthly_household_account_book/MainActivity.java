@@ -9,8 +9,15 @@ import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
+import android.view.View;
+import android.widget.AdapterView;
+import android.widget.ListView;
 
+import com.example.monthly_household_account_book.main_adapter.Items;
+import com.example.monthly_household_account_book.main_adapter.ListviewAdapter;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
+
+import java.util.ArrayList;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -21,6 +28,8 @@ public class MainActivity extends AppCompatActivity {
     private Chart chartPage;
     private Saving savingPage;
     private Calendar calendarPage;
+
+
 
 
     @Override
@@ -57,8 +66,11 @@ public class MainActivity extends AppCompatActivity {
         savingPage = new Saving();
         calendarPage = new Calendar();
         setFrag(0);
-    }
 
+
+     }
+
+    // Fragmant
     private void setFrag(int n){
 
         fragmentManager = getSupportFragmentManager();

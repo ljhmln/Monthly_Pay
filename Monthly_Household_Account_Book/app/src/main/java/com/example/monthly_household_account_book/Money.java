@@ -4,21 +4,59 @@ import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
+import android.widget.LinearLayout;
+import android.widget.ListView;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 
+import com.example.monthly_household_account_book.main_adapter.Items;
+import com.example.monthly_household_account_book.main_adapter.ListviewAdapter;
+
+import java.util.ArrayList;
+
 
 public class Money extends Fragment {
 
     private View view;
+    //Main Adapter Field
+     ListView listView;
+    private ListviewAdapter adapter;
+    private ArrayList<Items> itemsArr = new ArrayList<Items>();
 
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         view = inflater.inflate(R.layout.money, container, false);
 
+        ListView listView = (ListView)view.findViewById(R.id.listview);
+        //Main Adapter Custem ListView
+        adapter = new ListviewAdapter(itemsArr);
+        listView.setAdapter(adapter);
+        listView.setOnItemLongClickListener(new AdapterView.OnItemLongClickListener() {
+            @Override
+            public boolean onItemLongClick(AdapterView<?> parent, View view, int position, long id) {
+
+                return false;
+            }
+        });
+
+        for(int i=0; i<10; i++){
+            Items item = new Items();
+            item.setKind("수입");
+            item.setCategory("용돈");
+            item.setMoney("100,000");
+            itemsArr.add(item);
+            Items item2 = new Items();
+            item2.setKind("지출");
+            item2.setCategory("용돈");
+            item2.setMoney("100,000");
+            itemsArr.add(item2);
+        }
+
+        adapter.addItem(itemsArr);
         return view;
     }
 }
