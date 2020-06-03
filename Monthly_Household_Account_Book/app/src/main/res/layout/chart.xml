@@ -4,34 +4,27 @@
     android:layout_height="match_parent"
     android:orientation="vertical"
     >
-    <HorizontalScrollView
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:scrollbars="none">
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="horizontal">
 
             <com.github.mikephil.charting.charts.BarChart
-                android:id="@+id/chart"
+                android:id="@+id/graph"
                 android:layout_width="match_parent"
-                android:layout_height="250sp"
-                android:background="#ffb3b3"/>
+                android:layout_height="400sp" />
 
-        </LinearLayout>
 
-    </HorizontalScrollView>
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:textSize="30sp"
-        android:text="안녕 안녕 안녕"/>
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:textSize="30sp"
-        android:text="안녕 안녕 안녕"/>
+
+
+
+
+<!--    <TextView-->
+<!--        android:layout_width="wrap_content"-->
+<!--        android:layout_height="wrap_content"-->
+<!--        android:textSize="30sp"-->
+<!--        android:text="안녕 안녕 안녕"/>-->
+<!--    <TextView-->
+<!--        android:layout_width="wrap_content"-->
+<!--        android:layout_height="wrap_content"-->
+<!--        android:textSize="30sp"-->
+<!--        android:text="안녕 안녕 안녕"/>-->
 
 
 </LinearLayout>
