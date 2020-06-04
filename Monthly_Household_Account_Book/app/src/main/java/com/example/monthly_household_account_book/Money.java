@@ -11,11 +11,15 @@ import android.widget.ListView;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentActivity;
 
 import com.example.monthly_household_account_book.main_adapter.Items;
 import com.example.monthly_household_account_book.main_adapter.ListviewAdapter;
 
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 
 
 public class Money extends Fragment {
@@ -58,5 +62,30 @@ public class Money extends Fragment {
 
         adapter.addItem(itemsArr);
         return view;
+    }
+
+    String testGetDate() {
+        long now = System.currentTimeMillis();
+        Date nowDate = new Date(now);
+
+        SimpleDateFormat dateFormat = new SimpleDateFormat("MM");
+        String time;
+
+        return time = dateFormat.format(nowDate);
+    }
+
+
+
+
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        FragmentActivity activity = getActivity();
+        if (activity != null) {
+            String date = testGetDate();
+            //MainActivity의 메소드 사용하여 액션바 타이틀 변경.
+            ((MainActivity) activity).setActionBarTitle(date+"월 수입 지출 현황");
+        }
     }
 }

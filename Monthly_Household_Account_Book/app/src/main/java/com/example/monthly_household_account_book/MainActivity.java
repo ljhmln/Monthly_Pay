@@ -1,6 +1,7 @@
 package com.example.monthly_household_account_book;
 
 import androidx.annotation.NonNull;
+import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentTransaction;
@@ -101,6 +102,14 @@ public class MainActivity extends AppCompatActivity {
         MenuInflater menuInflater = getMenuInflater();
         menuInflater.inflate(R.menu.actionbar, menu);
         return true;
+    }
+
+    // 각 탭에서 액션바 타이틀 세팅하기 위한 메소드
+    public void setActionBarTitle(String title) {
+        ActionBar actionBar = getSupportActionBar();
+        if (actionBar != null) {
+            actionBar.setTitle(title);
+        }
     }
 
     //버튼을 눌렀을때 반응
