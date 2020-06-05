@@ -50,6 +50,8 @@ public class ListviewAdapter extends BaseAdapter {
         return convertView;
     }
 
+
+
     public void addItem(ArrayList<Items> arr){
         if(itemsArr != null){
             itemsArr.clear();

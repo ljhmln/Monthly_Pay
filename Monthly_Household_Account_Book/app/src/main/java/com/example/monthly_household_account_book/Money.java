@@ -1,10 +1,15 @@
 package com.example.monthly_household_account_book;
 
+import android.annotation.SuppressLint;
+import android.app.Activity;
+import android.content.Intent;
 import android.os.Bundle;
+import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
+import android.widget.Button;
 import android.widget.LinearLayout;
 import android.widget.ListView;
 
@@ -13,6 +18,7 @@ import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentActivity;
 
+import com.example.monthly_household_account_book.main_adapter.Add_Activity;
 import com.example.monthly_household_account_book.main_adapter.Items;
 import com.example.monthly_household_account_book.main_adapter.ListviewAdapter;
 
@@ -20,6 +26,8 @@ import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
+
+import static android.view.Gravity.BOTTOM;
 
 
 public class Money extends Fragment {
@@ -61,6 +69,20 @@ public class Money extends Fragment {
         }
 
         adapter.addItem(itemsArr);
+
+        Button add_btn = (Button)view.findViewById(R.id.add_btn);
+
+        add_btn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Add_Activity add_activity = new Add_Activity();
+                add_activity.show(getFragmentManager(),"추가하기");
+            }
+        });
+
+
+
+
         return view;
     }
 
@@ -78,10 +100,14 @@ public class Money extends Fragment {
 
 
 
+
+
     @Override
     public void onResume() {
         super.onResume();
         FragmentActivity activity = getActivity();
+
+
         if (activity != null) {
             String date = testGetDate();
             //MainActivity의 메소드 사용하여 액션바 타이틀 변경.
