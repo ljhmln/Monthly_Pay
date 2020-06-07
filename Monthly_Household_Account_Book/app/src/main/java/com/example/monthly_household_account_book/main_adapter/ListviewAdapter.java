@@ -45,8 +45,9 @@ public class ListviewAdapter extends BaseAdapter {
             kind_txt.setText(String.valueOf(listItem.getKind()));
             category_txt.setText(String.valueOf(listItem.getCategory()));
             money_txt.setText(String.valueOf(listItem.getMoney())+"원");
-        }
 
+        }
+        this.notifyDataSetChanged();
         return convertView;
     }
 

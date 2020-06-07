@@ -29,6 +29,12 @@ public class MainActivity extends AppCompatActivity {
     private Chart chartPage;
     private Saving savingPage;
     private Calendar calendarPage;
+    private ArrayList<Items> itemsArr = new ArrayList<Items>();
+    public ListviewAdapter adapter = new ListviewAdapter(itemsArr);
+    private int income = 0 ;
+    private int outgoing = 0;
+    private int belence = 0;
+    public int fixed_money = 2000000;
 
 
 
@@ -57,6 +63,9 @@ public class MainActivity extends AppCompatActivity {
                         setFrag(3);
                         break;
                 }
+
+
+
 
                 return true;
             }
@@ -120,4 +129,41 @@ public class MainActivity extends AppCompatActivity {
 //
 //      }
 //    }
+
+    //getter and setter itemsArray
+    public void setItemsArr(Items item) {
+        this.itemsArr.add(item);
+        adapter.addItem(itemsArr);
+        adapter.notifyDataSetChanged();
+
+    }
+    public ArrayList<Items> getItemsArr() {
+        return this.itemsArr;
+
+    }
+    public int getBeleance() {
+       income = 0 ;
+       outgoing = 0;
+       belence = 0;
+        for(int i=0; i<itemsArr.size(); i++){
+            if(itemsArr.get(i).getCategory().equals("수입"))
+                income += Integer.parseInt(itemsArr.get(i).getMoney());
+            else if(itemsArr.get(i).getCategory().equals("지출"))
+                outgoing += Integer.parseInt(itemsArr.get(i).getMoney());
+        }
+
+        belence = fixed_money - outgoing;
+        System.out.println("밸런스 : " +belence);
+        return belence;
+    }
+
+    public int getOutgoing(){
+        getBeleance();
+        return outgoing;
+    }
+
+    public int getIncome(){
+        getBeleance();
+        return income;
+    }
 }

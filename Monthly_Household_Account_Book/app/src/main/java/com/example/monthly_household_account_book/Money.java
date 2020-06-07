@@ -12,17 +12,20 @@ import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.LinearLayout;
 import android.widget.ListView;
+import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentActivity;
+import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.monthly_household_account_book.main_adapter.Add_Activity;
 import com.example.monthly_household_account_book.main_adapter.Items;
 import com.example.monthly_household_account_book.main_adapter.ListviewAdapter;
 
 import java.text.DateFormat;
+import java.text.DecimalFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
@@ -33,10 +36,11 @@ import static android.view.Gravity.BOTTOM;
 public class Money extends Fragment {
 
     private View view;
+    private TextView belence_txt ;
+
     //Main Adapter Field
-     ListView listView;
-    private ListviewAdapter adapter;
-    private ArrayList<Items> itemsArr = new ArrayList<Items>();
+    private ArrayList<Items> itemsArr;
+    Add_Activity add_activity = new Add_Activity();
 
     @Nullable
     @Override
@@ -44,9 +48,15 @@ public class Money extends Fragment {
         view = inflater.inflate(R.layout.money, container, false);
 
         ListView listView = (ListView)view.findViewById(R.id.listview);
-        //Main Adapter Custem ListView
-        adapter = new ListviewAdapter(itemsArr);
-        listView.setAdapter(adapter);
+        final TextView total_outgoing_txt = (TextView)view.findViewById(R.id.total_outgoing_txt);
+        belence_txt  = (TextView)view.findViewById(R.id.belence_txt);
+
+        //Main Adapter Custom ListView
+        itemsArr = ((MainActivity)getActivity()).getItemsArr();
+        listView.setAdapter(((MainActivity)getActivity()).adapter);
+
+        changeMoney();
+
         listView.setOnItemLongClickListener(new AdapterView.OnItemLongClickListener() {
             @Override
             public boolean onItemLongClick(AdapterView<?> parent, View view, int position, long id) {
@@ -55,32 +65,21 @@ public class Money extends Fragment {
             }
         });
 
-        for(int i=0; i<10; i++){
-            Items item = new Items();
-            item.setKind("수입");
-            item.setCategory("용돈");
-            item.setMoney("100,000");
-            itemsArr.add(item);
-            Items item2 = new Items();
-            item2.setKind("지출");
-            item2.setCategory("용돈");
-            item2.setMoney("100,000");
-            itemsArr.add(item2);
-        }
-
-        adapter.addItem(itemsArr);
-
         Button add_btn = (Button)view.findViewById(R.id.add_btn);
 
         add_btn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Add_Activity add_activity = new Add_Activity();
-                add_activity.show(getFragmentManager(),"추가하기");
+                 add_activity.show(getFragmentManager(),"추가하기");
+
             }
         });
-
-
+//        if(add_activity.change_money){
+//            System.out.println("체인지 머니 들옴");
+//            ((MainActivity)getActivity()).adapter.notifyDataSetChanged();
+//            changeMoney();
+//        }
+//
 
 
         return view;
@@ -99,6 +98,11 @@ public class Money extends Fragment {
 
 
 
+    public void changeMoney() {
+        DecimalFormat decimalFormat = new DecimalFormat("###,###");
+        belence_txt.setText(decimalFormat.format(((MainActivity)getActivity()).getBeleance()));
+    }
+
 
 
 
@@ -106,6 +110,8 @@ public class Money extends Fragment {
     public void onResume() {
         super.onResume();
         FragmentActivity activity = getActivity();
+
+
 
 
         if (activity != null) {
