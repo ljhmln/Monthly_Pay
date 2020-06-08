@@ -9,6 +9,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ListView;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
@@ -53,7 +54,7 @@ public class Chart extends Fragment {
     ArrayList<IBarDataSet> dataSets = new ArrayList<>();
     float defaultBarWidth = -1;
     List<String> xAxisValues = new ArrayList<>(Arrays.asList("1월","2월","3월","4월","5월","6월","7월","8월","9월","10월","11월","12월"));
-
+    ListView listView;
 
 
     @Nullable
@@ -61,6 +62,7 @@ public class Chart extends Fragment {
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         view = inflater.inflate(R.layout.chart, container, false);
         barChart = (BarChart) view.findViewById(R.id.graph);
+        listView = (ListView) view.findViewById(R.id.listView);
 //        graph();
 //        chart();
         setChart();
