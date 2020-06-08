@@ -2,12 +2,14 @@ package com.example.monthly_household_account_book;
 
 import android.graphics.Canvas;
 import android.graphics.Color;
+import android.graphics.Typeface;
 import android.os.Bundle;
 
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -29,15 +31,18 @@ import com.github.mikephil.charting.data.BarEntry;
 import com.github.mikephil.charting.data.Entry;
 import com.github.mikephil.charting.formatter.IAxisValueFormatter;
 import com.github.mikephil.charting.formatter.IValueFormatter;
+import com.github.mikephil.charting.formatter.IndexAxisValueFormatter;
 import com.github.mikephil.charting.formatter.ValueFormatter;
 import com.github.mikephil.charting.interfaces.dataprovider.BarDataProvider;
 import com.github.mikephil.charting.interfaces.datasets.IBarDataSet;
 import com.github.mikephil.charting.renderer.BarChartRenderer;
+import com.github.mikephil.charting.utils.FSize;
 import com.github.mikephil.charting.utils.ViewPortHandler;
 
 
 import java.util.ArrayList;
-
+import java.util.Arrays;
+import java.util.List;
 
 
 public class Chart extends Fragment {
@@ -45,8 +50,10 @@ public class Chart extends Fragment {
 
     private View view;
     BarChart barChart;
-    Description desc;
-    Legend l;
+    ArrayList<IBarDataSet> dataSets = new ArrayList<>();
+    float defaultBarWidth = -1;
+    List<String> xAxisValues = new ArrayList<>(Arrays.asList("1월","2월","3월","4월","5월","6월","7월","8월","9월","10월","11월","12월"));
+
 
 
     @Nullable
@@ -56,98 +63,145 @@ public class Chart extends Fragment {
         barChart = (BarChart) view.findViewById(R.id.graph);
 //        graph();
 //        chart();
+        setChart();
         return view;
     }
 
-    public void twoChart() {
-        barChart.setDrawBarShadow(false);
-        barChart.setDrawValueAboveBar(false);
-        barChart.getDescription().setEnabled(false);
-        barChart.setDrawGridBackground(false);
 
-        String[] labels = {"", "1월", "2월", "3월", "4월", "5월", "6월", "7월", "8월", "9월", "10월", "11월", "12월", ""};
-        IAxisValueFormatter xAxisFormatter = new LabelFormatter(barChart, labels);
+    public void setChart(){
 
-        XAxis xAxis = barChart.getXAxis();
-        xAxis.setCenterAxisLabels(true);
-        xAxis.setPosition(XAxis.XAxisPosition.BOTTOM);
-        xAxis.setDrawGridLines(false);
-        xAxis.setGranularity(1f);
-        xAxis.setTextColor(Color.GRAY);
-        xAxis.setTextSize(12);
-        xAxis.setAxisLineColor(Color.WHITE);
-        xAxis.setAxisMinimum(1f);
-        xAxis.setValueFormatter((ValueFormatter) xAxisFormatter);
+        List<BarEntry> incomeEntries = getIncomeEntries();
+        List<BarEntry> expenseEntries = getExpenseEntries();
+        dataSets = new ArrayList<>();
+        BarDataSet set1, set2;
 
+        set1 = new BarDataSet(incomeEntries, "수입");
+        set1.setColor(Color.rgb(74,168,216));
+        set1.setValueTextColor(Color.rgb(55,70,73));
+        set1.setValueTextSize(10f);
 
-        YAxis yAxisLeft = barChart.getAxisLeft();
-        yAxisLeft.setTextColor(Color.BLUE);
-        yAxisLeft.setTextSize(12);
-        yAxisLeft.setAxisLineColor(Color.WHITE);
-        yAxisLeft.setDrawGridLines(false);
-        yAxisLeft.setGranularity(2);
-        yAxisLeft.setLabelCount(8, true);
-        yAxisLeft.setPosition(YAxis.YAxisLabelPosition.OUTSIDE_CHART);
+        set2 = new BarDataSet(expenseEntries, "지출");
+        set2.setColor(Color.rgb(241,107,72));
+        set2.setValueTextColor(Color.rgb(55,70,73));
+        set2.setValueTextSize(10f);
 
-        barChart.getAxisRight().setEnabled(false);
-        barChart.getLegend().setEnabled(false);
-
-        float[] valOne = {30, 40};
-        float[] valTwo = {80, 20};
-
-        ArrayList<BarEntry> barOne = new ArrayList<>();
-        ArrayList<BarEntry> barTwo = new ArrayList<>();
-
-        for (int i = 0; i < 10; i++) {
-            barOne.add(new BarEntry(i, valOne[i]));
-            barTwo.add(new BarEntry(i, valTwo[i]));
-        }
-
-        BarDataSet set1 = new BarDataSet(barOne, "barOne");
-        set1.setColor(Color.BLUE);
-        BarDataSet set2 = new BarDataSet(barTwo, "barOne");
-        set1.setColor(Color.RED);
-
-        set1.setHighlightEnabled(false);
-        set1.setDrawValues(false);
-        set2.setHighlightEnabled(false);
-        set2.setDrawValues(false);
-
-        ArrayList<IBarDataSet> dataSets = new ArrayList<>();
         dataSets.add(set1);
         dataSets.add(set2);
 
         BarData data = new BarData(dataSets);
-        float groupSpace = 0.2f;
-        float barSpace = 0f;
-        float barWidth = 0.16f;
-
-        data.setBarWidth(barWidth);
-
-        xAxis.setAxisMaximum(labels.length - 1.1f);
         barChart.setData(data);
-        barChart.setScaleEnabled(false);
-        barChart.setVisibleXRangeMaximum(2f);
-        barChart.groupBars(1f, groupSpace, barSpace);
+        barChart.getAxisLeft().setAxisMinimum(0);
+
+        barChart.getDescription().setEnabled(false);
+        barChart.getAxisRight().setAxisMinimum(0);
+        barChart.setDrawBarShadow(false);
+        barChart.setDrawValueAboveBar(true);
+        barChart.setMaxVisibleValueCount(12);
+        barChart.setPinchZoom(false);
+        barChart.setDrawGridBackground(false);
+
+        Legend l = barChart.getLegend();
+        l.setWordWrapEnabled(true);
+        l.setTextSize(15);
+        l.setVerticalAlignment(Legend.LegendVerticalAlignment.TOP);
+        l.setHorizontalAlignment(Legend.LegendHorizontalAlignment.CENTER);
+        l.setOrientation(Legend.LegendOrientation.HORIZONTAL);
+        l.setDrawInside(false);
+        l.setForm(Legend.LegendForm.CIRCLE);
+
+        XAxis xAxis = barChart.getXAxis();
+        xAxis.setLabelCount(xAxisValues.size()+1, true);
+        xAxis.setGranularity(1f);
+        xAxis.setCenterAxisLabels(true);
+        xAxis.setDrawGridLines(false);
+        xAxis.setPosition(XAxis.XAxisPosition.BOTTOM);
+        xAxis.setAxisMaximum(getIncomeEntries().size());
+
+        barChart.getXAxis().setValueFormatter(new IndexAxisValueFormatter(xAxisValues));
+
+        YAxis yAxis = barChart.getAxisLeft();
+        yAxis.removeAllLimitLines();
+        yAxis.setTypeface(Typeface.DEFAULT);
+        yAxis.setPosition(YAxis.YAxisLabelPosition.OUTSIDE_CHART);
+        yAxis.setTextColor(Color.BLACK);
+        yAxis.setDrawGridLines(false);
+        barChart.getAxisRight().setEnabled(false);
+
+        setBarWidth(data);
         barChart.invalidate();
 
     }
 
-
-    private class LabelFormatter implements IAxisValueFormatter {
-        String[] labels;
-        BarLineChartBase<?> chart;
-        LabelFormatter(BarLineChartBase<?> chart, String[] labels){
-            this.chart = chart;
-            this.labels = labels;
-        }
-
-        @Override
-        public String getFormattedValue(float value, AxisBase axis) {
-            return labels[(int) value];
+    private void setBarWidth(BarData barData){
+        if(dataSets.size() > 1){
+            float barSpace = 0.02f;
+            float groupSpace = 0.3f;
+            defaultBarWidth = (1 - groupSpace) / dataSets.size() - barSpace;
+            if(defaultBarWidth >= 0){
+                barData.setBarWidth(defaultBarWidth);
+            }else {
+//                Toast.makeText(getContext(), "Defalut Barwidth" + defaultBarWidth, Toast.LENGTH_SHORT).show();
+                System.out.println("문제 발생");
+            }
+            int groupCount = getIncomeEntries().size();
+            if (groupCount != -1){
+                barChart.getXAxis().setAxisMinimum(0);
+                barChart.getXAxis().setAxisMaximum(0 + barChart.getBarData().getGroupWidth(groupSpace, barSpace) * groupCount);
+                barChart.getXAxis().setCenterAxisLabels(true);
+            }else{
+                System.out.println("문제 발생");
+//                Toast.makeText(getContext(), "no of bar groups is " + groupCount, Toast.LENGTH_SHORT).show();
+            }
+            barChart.groupBars(0,groupSpace,barSpace);
+            barChart.invalidate();
         }
     }
 
+    private List<BarEntry> getIncomeEntries(){
+        ArrayList<BarEntry> incomeEntries = new ArrayList<>();
+
+        incomeEntries.add(new BarEntry(1, 1900000));
+        incomeEntries.add(new BarEntry(2, 2000000));
+        incomeEntries.add(new BarEntry(3, 2100000));
+        incomeEntries.add(new BarEntry(4, 1980000));
+        incomeEntries.add(new BarEntry(5, 1700000));
+        incomeEntries.add(new BarEntry(6, 1500000));
+        incomeEntries.add(new BarEntry(7, 1000000));
+        incomeEntries.add(new BarEntry(8, 1000000));
+        incomeEntries.add(new BarEntry(9, 1200000));
+        incomeEntries.add(new BarEntry(10, 1800000));
+        incomeEntries.add(new BarEntry(11, 1870000));
+        incomeEntries.add(new BarEntry(12, 1250000));
+        return incomeEntries.subList(0,12);
+    }
+
+    private List<BarEntry> getExpenseEntries(){
+        ArrayList<BarEntry> expenseEntries = new ArrayList<>();
+
+        expenseEntries.add(new BarEntry(1, 1400000));
+        expenseEntries.add(new BarEntry(2, 1520000));
+        expenseEntries.add(new BarEntry(3, 1250000));
+        expenseEntries.add(new BarEntry(4, 1120000));
+        expenseEntries.add(new BarEntry(5, 1180000));
+        expenseEntries.add(new BarEntry(6, 1000000));
+        expenseEntries.add(new BarEntry(7, 650000));
+        expenseEntries.add(new BarEntry(8, 800000));
+        expenseEntries.add(new BarEntry(9, 950000));
+        expenseEntries.add(new BarEntry(10, 1000000));
+        expenseEntries.add(new BarEntry(11, 840000));
+        expenseEntries.add(new BarEntry(12, 950000));
+        return expenseEntries.subList(0,12);
+    }
+
+
+
+
+
+
+
+
+
+// -------------------------------------------------
 //    public void chart(){
 //        barChart.setDrawBarShadow(false);
 //        barChart.setDrawValueAboveBar(false);
@@ -230,6 +284,10 @@ public class Chart extends Fragment {
 //        }
 //    }
 
+
+
+
+ //----------------------------------
 //    public void  graph(){
 //        l = barChart.getLegend();
 //        desc = barChart.getDescription();
