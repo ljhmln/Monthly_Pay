@@ -3,10 +3,12 @@ package com.example.monthly_household_account_book;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Typeface;
+import android.nfc.Tag;
 import android.os.Bundle;
 
 import android.util.Log;
 import android.view.LayoutInflater;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ListView;
@@ -16,8 +18,10 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
 import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentActivity;
 
 
+import com.example.monthly_household_account_book.main_adapter.Items;
 import com.github.mikephil.charting.animation.ChartAnimator;
 import com.github.mikephil.charting.charts.BarChart;
 import com.github.mikephil.charting.charts.BarLineChartBase;
@@ -36,8 +40,11 @@ import com.github.mikephil.charting.formatter.IndexAxisValueFormatter;
 import com.github.mikephil.charting.formatter.ValueFormatter;
 import com.github.mikephil.charting.interfaces.dataprovider.BarDataProvider;
 import com.github.mikephil.charting.interfaces.datasets.IBarDataSet;
+import com.github.mikephil.charting.listener.ChartTouchListener;
+import com.github.mikephil.charting.listener.OnChartGestureListener;
 import com.github.mikephil.charting.renderer.BarChartRenderer;
 import com.github.mikephil.charting.utils.FSize;
+import com.github.mikephil.charting.utils.MPPointD;
 import com.github.mikephil.charting.utils.ViewPortHandler;
 
 
@@ -48,13 +55,16 @@ import java.util.List;
 
 public class Chart extends Fragment {
 
-
     private View view;
     BarChart barChart;
     ArrayList<IBarDataSet> dataSets = new ArrayList<>();
     float defaultBarWidth = -1;
     List<String> xAxisValues = new ArrayList<>(Arrays.asList("1월","2월","3월","4월","5월","6월","7월","8월","9월","10월","11월","12월"));
     ListView listView;
+    List<Integer> money = new ArrayList<>(Arrays.asList(1800000, 0, 1800000, 0, 0, 1200000, 1800000, 1300000, 0, 1700000,1100000, 1200000));
+    List<Integer> minusMoney = new ArrayList<>(Arrays.asList(2200000,0,1150000,0,0,1000000,1700000,1200000,0,1650000,1100000,1200000));
+
+
 
 
     @Nullable
@@ -63,17 +73,22 @@ public class Chart extends Fragment {
         view = inflater.inflate(R.layout.chart, container, false);
         barChart = (BarChart) view.findViewById(R.id.graph);
         listView = (ListView) view.findViewById(R.id.listView);
-//        graph();
-//        chart();
+
+        //MainActivity의 메소드 사용하여 액션바 타이틀 변경.
+        ((MainActivity) getActivity()).setActionBarTitle("월별 수입 / 지출 통계");
+
         setChart();
+        MarkerView markerView = new MarkerView(getActivity(), R.layout.markerview);
+        markerView.setChartView(barChart);
+        barChart.setMarker(markerView);
         return view;
     }
 
 
     public void setChart(){
+        List<BarEntry>  incomeEntries = getIncomeEntries();
+        List<BarEntry>   expenseEntries = getExpenseEntries();
 
-        List<BarEntry> incomeEntries = getIncomeEntries();
-        List<BarEntry> expenseEntries = getExpenseEntries();
         dataSets = new ArrayList<>();
         BarDataSet set1, set2;
 
@@ -101,21 +116,26 @@ public class Chart extends Fragment {
         barChart.setMaxVisibleValueCount(12);
         barChart.setPinchZoom(false);
         barChart.setDrawGridBackground(false);
+        barChart.setScaleEnabled(false);
+
+
 
         Legend l = barChart.getLegend();
         l.setWordWrapEnabled(true);
         l.setTextSize(15);
+        l.setFormSize(15);
         l.setVerticalAlignment(Legend.LegendVerticalAlignment.TOP);
-        l.setHorizontalAlignment(Legend.LegendHorizontalAlignment.CENTER);
-        l.setOrientation(Legend.LegendOrientation.HORIZONTAL);
+        l.setHorizontalAlignment(Legend.LegendHorizontalAlignment.LEFT);
+        l.setOrientation(Legend.LegendOrientation.VERTICAL);
         l.setDrawInside(false);
-        l.setForm(Legend.LegendForm.CIRCLE);
+        l.setForm(Legend.LegendForm.LINE);
 
         XAxis xAxis = barChart.getXAxis();
         xAxis.setLabelCount(xAxisValues.size()+1, true);
         xAxis.setGranularity(1f);
         xAxis.setCenterAxisLabels(true);
         xAxis.setDrawGridLines(false);
+//        xAxis.setTextSize(12);
         xAxis.setPosition(XAxis.XAxisPosition.BOTTOM);
         xAxis.setAxisMaximum(getIncomeEntries().size());
 
@@ -131,6 +151,55 @@ public class Chart extends Fragment {
 
         setBarWidth(data);
         barChart.invalidate();
+
+
+        barChart.setOnChartGestureListener(new OnChartGestureListener() {
+            @Override  //터치 제스처가 차트에서 시작되면 콜백
+            public void onChartGestureStart(MotionEvent me, ChartTouchListener.ChartGesture lastPerformedGesture) {
+
+            }
+
+            @Override  //터치 제스처가 차트에서 끝났을때의 콜백
+            public void onChartGestureEnd(MotionEvent me, ChartTouchListener.ChartGesture lastPerformedGesture) {
+
+            }
+
+            @Override // 차트를 길게 누르면 콜백
+            public void onChartLongPressed(MotionEvent me) {
+
+            }
+
+            @Override //차트를 더블클릭 했을때 콜백
+            public void onChartDoubleTapped(MotionEvent me) {
+
+            }
+
+            @Override  //차트를 한번 누르면 콜백
+            public void onChartSingleTapped(MotionEvent me) {
+
+                float tappedX = me.getX();
+                float tappedY = me.getY();
+                MPPointD pointD = barChart.getTransformer(YAxis.AxisDependency.LEFT).getValuesByTouchPoint(tappedX, tappedY);
+               System.out.println("tapped at : " + pointD.x + ", " + pointD.y);
+
+            }
+
+            @Override  //콜백은 플링 제스처로 차트에 표시됩니다.
+            public void onChartFling(MotionEvent me1, MotionEvent me2, float velocityX, float velocityY) {
+
+            }
+
+            @Override //핀치 확대 / 축소 제스처를 통해 차트가 확대 / 축소 될 때의 콜백
+            public void onChartScale(MotionEvent me, float scaleX, float scaleY) {
+
+            }
+
+            @Override //드래그 동작을 통해 차트를 이동 / 번역 할 때의 콜백
+            public void onChartTranslate(MotionEvent me, float dX, float dY) {
+
+            }
+        });
+
 
     }
 
@@ -159,41 +228,184 @@ public class Chart extends Fragment {
         }
     }
 
-    private List<BarEntry> getIncomeEntries(){
+    private List<BarEntry> getIncomeEntries(){ //수입
+        int count;
         ArrayList<BarEntry> incomeEntries = new ArrayList<>();
+        for( count= 0; count <money.size(); count++) {
+                incomeEntries.add(new BarEntry(count+1, money.get(count)));
 
-        incomeEntries.add(new BarEntry(1, 1900000));
-        incomeEntries.add(new BarEntry(2, 2000000));
-        incomeEntries.add(new BarEntry(3, 2100000));
-        incomeEntries.add(new BarEntry(4, 1980000));
-        incomeEntries.add(new BarEntry(5, 1700000));
-        incomeEntries.add(new BarEntry(6, 1500000));
-        incomeEntries.add(new BarEntry(7, 1000000));
-        incomeEntries.add(new BarEntry(8, 1000000));
-        incomeEntries.add(new BarEntry(9, 1200000));
-        incomeEntries.add(new BarEntry(10, 1800000));
-        incomeEntries.add(new BarEntry(11, 1870000));
-        incomeEntries.add(new BarEntry(12, 1250000));
-        return incomeEntries.subList(0,12);
+
+        }
+        return incomeEntries.subList(0, money.size());
     }
 
-    private List<BarEntry> getExpenseEntries(){
+    private List<BarEntry> getExpenseEntries(){ //지출
+        int count;
         ArrayList<BarEntry> expenseEntries = new ArrayList<>();
+        for(count = 0; count<minusMoney.size(); count++){
+            expenseEntries.add(new BarEntry(count+1, minusMoney.get(count)));
+//            System.out.println( " count " + count +"+"+ minusMoney.get(count));
+        }
 
-        expenseEntries.add(new BarEntry(1, 1400000));
-        expenseEntries.add(new BarEntry(2, 1520000));
-        expenseEntries.add(new BarEntry(3, 1250000));
-        expenseEntries.add(new BarEntry(4, 1120000));
-        expenseEntries.add(new BarEntry(5, 1180000));
-        expenseEntries.add(new BarEntry(6, 1000000));
-        expenseEntries.add(new BarEntry(7, 650000));
-        expenseEntries.add(new BarEntry(8, 800000));
-        expenseEntries.add(new BarEntry(9, 950000));
-        expenseEntries.add(new BarEntry(10, 1000000));
-        expenseEntries.add(new BarEntry(11, 840000));
-        expenseEntries.add(new BarEntry(12, 950000));
-        return expenseEntries.subList(0,12);
+
+        return expenseEntries.subList(0, minusMoney.size());
     }
+
+
+
+
+
+
+
+
+
+//    public void setChart(){
+//
+//        List<BarEntry> incomeEntries = getIncomeEntries();
+//        List<BarEntry> expenseEntries = getExpenseEntries();
+//        dataSets = new ArrayList<>();
+//        BarDataSet set1, set2;
+//
+//        set1 = new BarDataSet(incomeEntries, "수입");
+//        set1.setColor(Color.rgb(74,168,216));
+//        set1.setValueTextColor(Color.rgb(55,70,73));
+//        set1.setValueTextSize(10f);
+//
+//        set2 = new BarDataSet(expenseEntries, "지출");
+//        set2.setColor(Color.rgb(241,107,72));
+//        set2.setValueTextColor(Color.rgb(55,70,73));
+//        set2.setValueTextSize(10f);
+//
+//        dataSets.add(set1);
+//        dataSets.add(set2);
+//
+//        BarData data = new BarData(dataSets);
+//        barChart.setData(data);
+//        barChart.getAxisLeft().setAxisMinimum(0);
+//
+//        barChart.getDescription().setEnabled(false);
+//        barChart.getAxisRight().setAxisMinimum(0);
+//        barChart.setDrawBarShadow(false);
+//        barChart.setDrawValueAboveBar(true);
+//        barChart.setMaxVisibleValueCount(12);
+//        barChart.setPinchZoom(false);
+//        barChart.setDrawGridBackground(false);
+//
+//        Legend l = barChart.getLegend();
+//        l.setWordWrapEnabled(true);
+//        l.setTextSize(15);
+//        l.setVerticalAlignment(Legend.LegendVerticalAlignment.TOP);
+//        l.setHorizontalAlignment(Legend.LegendHorizontalAlignment.CENTER);
+//        l.setOrientation(Legend.LegendOrientation.HORIZONTAL);
+//        l.setDrawInside(false);
+//        l.setForm(Legend.LegendForm.CIRCLE);
+//
+//        XAxis xAxis = barChart.getXAxis();
+//        xAxis.setLabelCount(xAxisValues.size()+1, true);
+//        xAxis.setGranularity(1f);
+//        xAxis.setCenterAxisLabels(true);
+//        xAxis.setDrawGridLines(false);
+//        xAxis.setPosition(XAxis.XAxisPosition.BOTTOM);
+//        xAxis.setAxisMaximum(getIncomeEntries().size());
+//
+//        barChart.getXAxis().setValueFormatter(new IndexAxisValueFormatter(xAxisValues));
+//
+//        YAxis yAxis = barChart.getAxisLeft();
+//        yAxis.removeAllLimitLines();
+//        yAxis.setTypeface(Typeface.DEFAULT);
+//        yAxis.setPosition(YAxis.YAxisLabelPosition.OUTSIDE_CHART);
+//        yAxis.setTextColor(Color.BLACK);
+//        yAxis.setDrawGridLines(false);
+//        barChart.getAxisRight().setEnabled(false);
+//
+//        setBarWidth(data);
+//        barChart.invalidate();
+//
+//    }
+//
+//    private void setBarWidth(BarData barData){
+//        if(dataSets.size() > 1){
+//            float barSpace = 0.02f;
+//            float groupSpace = 0.3f;
+//            defaultBarWidth = (1 - groupSpace) / dataSets.size() - barSpace;
+//            if(defaultBarWidth >= 0){
+//                barData.setBarWidth(defaultBarWidth);
+//            }else {
+////                Toast.makeText(getContext(), "Defalut Barwidth" + defaultBarWidth, Toast.LENGTH_SHORT).show();
+//                System.out.println("문제 발생");
+//            }
+//            int groupCount = getIncomeEntries().size();
+//            if (groupCount != -1){
+//                barChart.getXAxis().setAxisMinimum(0);
+//                barChart.getXAxis().setAxisMaximum(0 + barChart.getBarData().getGroupWidth(groupSpace, barSpace) * groupCount);
+//                barChart.getXAxis().setCenterAxisLabels(true);
+//            }else{
+//                System.out.println("문제 발생");
+////                Toast.makeText(getContext(), "no of bar groups is " + groupCount, Toast.LENGTH_SHORT).show();
+//            }
+//            barChart.groupBars(0,groupSpace,barSpace);
+//            barChart.invalidate();
+//        }
+//    }
+//
+//    private List<BarEntry> getIncomeEntries(int i, int j){
+//        ArrayList<BarEntry> incomeEntries = new ArrayList<>();
+//        for(int count = 0; count <incomeEntries.size(); count++) {
+//
+//            incomeEntries.add(new BarEntry(i, j));
+//        }
+//
+//
+//
+//        return incomeEntries.subList(i,j);
+//    }
+//
+//    private List<BarEntry> getExpenseEntries(int i, int j){
+//        ArrayList<BarEntry> expenseEntries = new ArrayList<>();
+//
+//        expenseEntries.add(new BarEntry(i, j));
+//
+//        return expenseEntries.subList(i, j);
+//    }
+//}
+
+
+
+//    private List<BarEntry> getIncomeEntries(){
+//        ArrayList<BarEntry> incomeEntries = new ArrayList<>();
+//
+//        incomeEntries.add(new BarEntry(1, 1900000));
+//        incomeEntries.add(new BarEntry(2, 2000000));
+//        incomeEntries.add(new BarEntry(3, 2100000));
+//        incomeEntries.add(new BarEntry(4, 1980000));
+//        incomeEntries.add(new BarEntry(5, 1700000));
+//        incomeEntries.add(new BarEntry(6, 1500000));
+//        incomeEntries.add(new BarEntry(7, 1000000));
+//        incomeEntries.add(new BarEntry(8, 1000000));
+//        incomeEntries.add(new BarEntry(9, 1200000));
+//        incomeEntries.add(new BarEntry(10, 1800000));
+//        incomeEntries.add(new BarEntry(11, 1870000));
+//        incomeEntries.add(new BarEntry(12, 1250000));
+//        return incomeEntries.subList(0,12);
+//    }
+//
+//private List<BarEntry> getExpenseEntries(){
+//        ArrayList<BarEntry> expenseEntries = new ArrayList<>();
+//
+//        expenseEntries.add(new BarEntry(1, 1400000));
+//        expenseEntries.add(new BarEntry(2, 1520000));
+//        expenseEntries.add(new BarEntry(3, 1250000));
+//        expenseEntries.add(new BarEntry(4, 1120000));
+//        expenseEntries.add(new BarEntry(5, 1180000));
+//        expenseEntries.add(new BarEntry(6, 1000000));
+//        expenseEntries.add(new BarEntry(7, 650000));
+//        expenseEntries.add(new BarEntry(8, 800000));
+//        expenseEntries.add(new BarEntry(9, 950000));
+//        expenseEntries.add(new BarEntry(10, 1000000));
+//        expenseEntries.add(new BarEntry(11, 840000));
+//        expenseEntries.add(new BarEntry(12, 950000));
+//        return expenseEntries.subList(0,12);
+//    }
 
 
 

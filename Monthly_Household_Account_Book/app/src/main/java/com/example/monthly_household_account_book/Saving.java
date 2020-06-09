@@ -18,6 +18,9 @@ public class Saving extends Fragment {
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         view = inflater.inflate(R.layout.saving, container, false);
 
+        //MainActivity의 메소드 사용하여 액션바 타이틀 변경.
+        ((MainActivity) getActivity()).setActionBarTitle("저축 현황");
+
         return view;
     }
 }
