@@ -18,6 +18,8 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentActivity;
+import androidx.fragment.app.FragmentManager;
+import androidx.fragment.app.FragmentTransaction;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.monthly_household_account_book.main_adapter.Add_Activity;
@@ -47,15 +49,24 @@ public class Money extends Fragment {
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         view = inflater.inflate(R.layout.money, container, false);
 
+        // 초기화
         ListView listView = (ListView)view.findViewById(R.id.listview);
         final TextView total_outgoing_txt = (TextView)view.findViewById(R.id.total_outgoing_txt);
         belence_txt  = (TextView)view.findViewById(R.id.belence_txt);
+        Button add_btn = (Button)view.findViewById(R.id.add_btn);
 
         //Main Adapter Custom ListView
         itemsArr = ((MainActivity)getActivity()).getItemsArr();
         listView.setAdapter(((MainActivity)getActivity()).adapter);
 
+//        FragmentTransaction ft = getFragmentManager().beginTransaction();
+//        ft.detach(this).attach(this).commit();
+
         changeMoney();
+
+        /*
+        child Fragment Manager Test
+         */
 
         listView.setOnItemLongClickListener(new AdapterView.OnItemLongClickListener() {
             @Override
@@ -65,21 +76,41 @@ public class Money extends Fragment {
             }
         });
 
-        Button add_btn = (Button)view.findViewById(R.id.add_btn);
+       final FragmentManager child = getChildFragmentManager();
+        child.beginTransaction()
+                .add(add_activity, "child")
+                .addToBackStack(null);
+
 
         add_btn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                 add_activity.show(getFragmentManager(),"추가하기");
 
+                add_activity.show(child,"child");
+
+//
             }
         });
-//        if(add_activity.change_money){
-//            System.out.println("체인지 머니 들옴");
-//            ((MainActivity)getActivity()).adapter.notifyDataSetChanged();
-//            changeMoney();
-//        }
-//
+
+
+
+        if(getArguments() != null){
+            System.out.println("데이터 전달....");
+            if(!add_activity.isHidden()){
+                add_activity.dismiss();
+            }
+            if(getArguments().getInt("result")==1){
+                changeMoney();
+
+                getArguments().remove("result");
+                getArguments().clear();
+
+            }
+        }
+
+
+
+
 
 
         return view;

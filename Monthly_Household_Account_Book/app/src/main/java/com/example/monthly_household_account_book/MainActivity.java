@@ -64,9 +64,6 @@ public class MainActivity extends AppCompatActivity {
                         break;
                 }
 
-
-
-
                 return true;
             }
         });
@@ -145,14 +142,21 @@ public class MainActivity extends AppCompatActivity {
        income = 0 ;
        outgoing = 0;
        belence = 0;
+        System.out.println("items 사이즈 : "+ itemsArr.size());
         for(int i=0; i<itemsArr.size(); i++){
-            if(itemsArr.get(i).getCategory().equals("수입"))
+            if(itemsArr.get(i).getKind().equals("수입")){
                 income += Integer.parseInt(itemsArr.get(i).getMoney());
-            else if(itemsArr.get(i).getCategory().equals("지출"))
+                System.out.println("지출금 : "+ itemsArr.get(i).getMoney());
+            }
+
+            else if(itemsArr.get(i).getKind().equals("지출")){
+                System.out.println("지출금 : "+ itemsArr.get(i).getMoney());
                 outgoing += Integer.parseInt(itemsArr.get(i).getMoney());
+            }
+
         }
 
-        belence = fixed_money - outgoing;
+        belence = fixed_money - outgoing + income;
         System.out.println("밸런스 : " +belence);
         return belence;
     }
