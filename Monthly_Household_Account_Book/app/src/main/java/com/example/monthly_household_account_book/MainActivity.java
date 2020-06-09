@@ -1,6 +1,7 @@
 package com.example.monthly_household_account_book;
 
 import androidx.annotation.NonNull;
+import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentTransaction;
@@ -9,8 +10,15 @@ import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
+import android.view.View;
+import android.widget.AdapterView;
+import android.widget.ListView;
 
+import com.example.monthly_household_account_book.main_adapter.Items;
+import com.example.monthly_household_account_book.main_adapter.ListviewAdapter;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
+
+import java.util.ArrayList;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -21,6 +29,14 @@ public class MainActivity extends AppCompatActivity {
     private Chart chartPage;
     private Saving savingPage;
     private Calendar calendarPage;
+    private ArrayList<Items> itemsArr = new ArrayList<Items>();
+    public ListviewAdapter adapter = new ListviewAdapter(itemsArr);
+    private int income = 0 ;
+    private int outgoing = 0;
+    private int belence = 0;
+    public int fixed_money = 2000000;
+
+
 
 
     @Override
@@ -57,8 +73,11 @@ public class MainActivity extends AppCompatActivity {
         savingPage = new Saving();
         calendarPage = new Calendar();
         setFrag(0);
-    }
 
+
+     }
+
+    // Fragmant
     private void setFrag(int n){
 
         fragmentManager = getSupportFragmentManager();
@@ -91,6 +110,14 @@ public class MainActivity extends AppCompatActivity {
         return true;
     }
 
+    // 각 탭에서 액션바 타이틀 세팅하기 위한 메소드
+    public void setActionBarTitle(String title) {
+        ActionBar actionBar = getSupportActionBar();
+        if (actionBar != null) {
+            actionBar.setTitle(title);
+        }
+    }
+
     //버튼을 눌렀을때 반응
 //    @Override
 //    public boolean onOptionsItemSelected(@NonNull MenuItem item) {
@@ -99,4 +126,48 @@ public class MainActivity extends AppCompatActivity {
 //
 //      }
 //    }
+
+    //getter and setter itemsArray
+    public void setItemsArr(Items item) {
+        this.itemsArr.add(item);
+        adapter.addItem(itemsArr);
+        adapter.notifyDataSetChanged();
+
+    }
+    public ArrayList<Items> getItemsArr() {
+        return this.itemsArr;
+
+    }
+    public int getBeleance() {
+       income = 0 ;
+       outgoing = 0;
+       belence = 0;
+        System.out.println("items 사이즈 : "+ itemsArr.size());
+        for(int i=0; i<itemsArr.size(); i++){
+            if(itemsArr.get(i).getKind().equals("수입")){
+                income += Integer.parseInt(itemsArr.get(i).getMoney());
+                System.out.println("지출금 : "+ itemsArr.get(i).getMoney());
+            }
+
+            else if(itemsArr.get(i).getKind().equals("지출")){
+                System.out.println("지출금 : "+ itemsArr.get(i).getMoney());
+                outgoing += Integer.parseInt(itemsArr.get(i).getMoney());
+            }
+
+        }
+
+        belence = fixed_money - outgoing + income;
+        System.out.println("밸런스 : " +belence);
+        return belence;
+    }
+
+    public int getOutgoing(){
+        getBeleance();
+        return outgoing;
+    }
+
+    public int getIncome(){
+        getBeleance();
+        return income;
+    }
 }
