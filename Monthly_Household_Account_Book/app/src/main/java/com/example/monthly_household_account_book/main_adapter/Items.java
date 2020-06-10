@@ -2,9 +2,12 @@ package com.example.monthly_household_account_book.main_adapter;
 
 public class Items {
 
-    private String kind, category, money, year, month, day;
+    private String kind, category, money, year, month, day, id, date;
     private int fixed_money = 2000000;
 
+    public void setDate(String date) {
+        this.date = date;
+    }
 
     public String getKind() {
         return kind;
@@ -17,6 +20,19 @@ public class Items {
             this.kind = "지출";
 
     }
+
+    public String getDate() {
+        return date;
+    }
+
+    public String getId() {
+        return id;
+    }
+
+    public void setId(String id) {
+        this.id = id;
+    }
+
 
     public String getYear() {
         return year;

@@ -13,6 +13,7 @@ import android.widget.Button;
 import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -38,11 +39,13 @@ import static android.view.Gravity.BOTTOM;
 public class Money extends Fragment {
 
     private View view;
-    private TextView belence_txt ;
+    private TextView belence_txt, fixed_money_edit;
+
 
     //Main Adapter Field
     private ArrayList<Items> itemsArr;
     Add_Activity add_activity = new Add_Activity();
+    DataBaseHelper helper = new DataBaseHelper(getContext());
 
     @Nullable
     @Override
@@ -54,13 +57,21 @@ public class Money extends Fragment {
         final TextView total_outgoing_txt = (TextView)view.findViewById(R.id.total_outgoing_txt);
         belence_txt  = (TextView)view.findViewById(R.id.belence_txt);
         Button add_btn = (Button)view.findViewById(R.id.add_btn);
+        fixed_money_edit = (TextView)view.findViewById(R.id.fixed_money_edit);
 
-        //Main Adapter Custom ListView
-        itemsArr = ((MainActivity)getActivity()).getItemsArr();
-        listView.setAdapter(((MainActivity)getActivity()).adapter);
+        try{
+            fixed_money_edit.setText(helper.getFixedMoney(MainActivity.dateRun.getNowYear_Month()));
+        }catch (NullPointerException e){
+            Toast.makeText(getContext(),"null!!",Toast.LENGTH_SHORT).show();
+        }
 
-//        FragmentTransaction ft = getFragmentManager().beginTransaction();
-//        ft.detach(this).attach(this).commit();
+
+        DataBaseHelper helper = new DataBaseHelper(getContext());
+        itemsArr = helper.getltems(MainActivity.dateRun.getNowYear_Month());
+        ListviewAdapter adapter = new ListviewAdapter(itemsArr);
+        adapter.notifyDataSetChanged();
+
+        listView.setAdapter(adapter);
 
         changeMoney();
 
@@ -131,7 +142,12 @@ public class Money extends Fragment {
 
     public void changeMoney() {
         DecimalFormat decimalFormat = new DecimalFormat("###,###");
-        belence_txt.setText(decimalFormat.format(((MainActivity)getActivity()).getBeleance()));
+//        belence_txt.setText(decimalFormat.format(((MainActivity)getActivity()).getBeleance()));
+        /*
+        테스트
+         */
+        DataBaseHelper helper = new DataBaseHelper(getContext());
+        belence_txt.setText(helper.getOutgoing("202006"));
     }
 
 
@@ -142,11 +158,11 @@ public class Money extends Fragment {
         super.onResume();
         FragmentActivity activity = getActivity();
 
-
-
-
         if (activity != null) {
             String date = testGetDate();
+            if(Integer.parseInt(date)<10){
+                date = String.valueOf(Integer.parseInt(date));
+            }
             //MainActivity의 메소드 사용하여 액션바 타이틀 변경.
             ((MainActivity) activity).setActionBarTitle(date+"월 수입 지출 현황");
         }

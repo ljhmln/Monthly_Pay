@@ -28,9 +28,11 @@ public class ListviewAdapter extends BaseAdapter {
         con = parent.getContext();
         this.inflater = (LayoutInflater)this.con.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
 
+        //custom list view layout 넣기
         if(convertView == null){
             convertView = inflater.inflate(R.layout.layout_listview,parent, false);
         }
+
         TextView kind_txt = (TextView)convertView.findViewById(R.id.kind_txt);
         TextView category_txt = (TextView)convertView.findViewById(R.id.category_txt);
         TextView money_txt = (TextView)convertView.findViewById(R.id.money_txt);

@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical" android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:padding="30dp">
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="고정 수입금 설정 테스트"
+        android:textColor="#000000"
+        android:textSize="15sp"
+        />
+
+    <EditText
+        android:id="@+id/edit_money"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:hint="금액을 입력하세요."
+        android:gravity="right"
+        />
+
+    <Button
+        android:id="@+id/btn"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="right"
+        android:text="설정"
+        />
+
+
+</LinearLayout>
