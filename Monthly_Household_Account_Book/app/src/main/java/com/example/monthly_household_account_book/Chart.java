@@ -14,10 +14,13 @@ import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.Window;
 import android.widget.Button;
 import android.widget.DatePicker;
 import android.widget.ImageButton;
 import android.widget.ListView;
+import android.widget.NumberPicker;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
@@ -65,8 +68,9 @@ import java.util.Calendar;
 import java.util.List;
 
 
-public class Chart extends Fragment implements View.OnClickListener{
+public class Chart extends Fragment {
 
+   public  Calendar cal = Calendar.getInstance();
 
     int i = 0;
     ViewPager viewPager;
@@ -75,8 +79,12 @@ public class Chart extends Fragment implements View.OnClickListener{
     private Chart_Fragment3 chart_fragment3;
     private Chart_Fragment4 chart_fragment4;
 
+    YearPicker yearPicker = new YearPicker();
+    int year = cal.get(Calendar.YEAR);
+
+
     private View view;
-    Button year;
+    TextView yearText;
     ImageButton leftBtn, rightBtn;
 
 //    BarChart barChart;
@@ -88,18 +96,62 @@ public class Chart extends Fragment implements View.OnClickListener{
 //    List<Integer> minusMoney = new ArrayList<>(Arrays.asList(2200000,0,1150000,0,0,1000000,1700000,1200000,0,1650000,1100000,1200000));
 //
 
-
+//    DatePickerDialog.OnDateSetListener d = new DatePickerDialog.OnDateSetListener() {
+//        @Override
+//        public void onDateSet(DatePicker datePicker, int i, int i1, int i2) {
+//            Intent intent = new Intent(getActivity(),YearPicker.class);
+//            startActivity(intent);
+//        }
+//    };
 
 
     @Nullable
     @Override
     public View onCreateView(@NonNull final LayoutInflater inflater, @Nullable final ViewGroup container, @Nullable Bundle savedInstanceState) {
         view = inflater.inflate(R.layout.chart, container, false);
-//        barChart = (BarChart) view.findViewById(R.id.graph);
-//        listView = (ListView) view.findViewById(R.id.listView);
-        year = (Button) view.findViewById(R.id.year);
-        year.setOnClickListener(this);
 
+        yearText = (TextView) view.findViewById(R.id.year);
+        yearText.setText(Integer.toString(year));
+
+        leftBtn = (ImageButton) view.findViewById(R.id.leftBtn);
+        rightBtn = (ImageButton) view.findViewById(R.id.rightBtn);
+
+        leftBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                    yearText.setText(Integer.toString(--year) );
+
+            }
+        });
+
+        rightBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+
+                    yearText.setText(Integer.toString(++year));
+
+
+            }
+        });
+
+        final FragmentManager fragmentManager = getChildFragmentManager();
+        fragmentManager.beginTransaction().add(yearPicker, "yearPicker")
+                .addToBackStack(null);
+
+
+        yearText.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                yearPicker.show(fragmentManager, "yearPicker");
+
+            }
+        });
+
+        if(getArguments() != null){
+            if(!yearPicker.isHidden()){
+                yearPicker.dismiss();
+            }
+        }
 
 
         //MainActivity의 메소드 사용하여 액션바 타이틀 변경.
@@ -119,30 +171,6 @@ public class Chart extends Fragment implements View.OnClickListener{
 //        markerView.setChartView(barChart);
 //        barChart.setMarker(markerView);
         return view;
-    }
-
-    @Override
-    public void onClick(View view) {
-        switch (view.getId()){
-            case R.id.year:
-                //데이터를 다이얼로그로 보내는 코드
-                Bundle bundle = new Bundle();
-                bundle.putString("key", "value");
-                YearPicker yearPicker = new YearPicker();
-                yearPicker.setArguments(bundle); //데이터 전달
-                yearPicker.show(getActivity().getSupportFragmentManager(),"year");
-                break;
-        }
-    }
-
-    private void setChildFragment(Fragment child){
-        FragmentTransaction fragmentTransaction = getChildFragmentManager().beginTransaction();
-
-        if(!child.isAdded()){
-            fragmentTransaction.replace(R.id.chart, child);
-            fragmentTransaction.addToBackStack(null);
-            fragmentTransaction.commit();
-        }
     }
 
     @Override
@@ -206,6 +234,50 @@ public class Chart extends Fragment implements View.OnClickListener{
             return 4;
         }
     }
+
+//    private void showYearPicker(){
+//        Calendar calendar = Calendar.getInstance();
+//        final int year = calendar.get(calendar.YEAR);
+//
+//        final Dialog yearDialog = new Dialog(getActivity());
+//        yearDialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
+//        yearDialog.setContentView(R.layout.year_picker);
+//
+//        Button confirm_btn = (Button) view.findViewById(R.id.confirm_btn);
+//        Button cancel_btn = (Button) view.findViewById(R.id.cancel_btn);
+//
+//        final NumberPicker numberPicker = (NumberPicker) yearDialog.findViewById(R.id.picker_year);
+//        numberPicker.setMinValue(year - 100);
+//        numberPicker.setMaxValue(year - 15);
+//        numberPicker.setDescendantFocusability(NumberPicker.FOCUS_BLOCK_DESCENDANTS);
+//
+//        numberPicker.setWrapSelectorWheel(false);
+//        numberPicker.setValue(year - 20);
+//        numberPicker.setOnValueChangedListener(new NumberPicker.OnValueChangeListener() {
+//            @Override
+//            public void onValueChange(NumberPicker numberPicker, int i, int i1) {
+//
+//            }
+//        });
+//
+//        confirm_btn.setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View view) {
+//                yearBtn.setText(String.valueOf(numberPicker.getValue()));
+//                yearDialog.dismiss();
+//            }
+//        });
+//
+//        cancel_btn.setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View view) {
+//                yearDialog.dismiss();
+//            }
+//        });
+//
+//        yearDialog.show();
+//
+//    }
 
     //    public void setChart(){
 //        List<BarEntry>  incomeEntries = getIncomeEntries();

@@ -7,6 +7,7 @@ import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.Window;
 import android.widget.Button;
 import android.widget.NumberPicker;
 
@@ -18,77 +19,61 @@ import androidx.fragment.app.Fragment;
 import java.util.Calendar;
 
 public class YearPicker extends DialogFragment {
-    private Fragment fragment;
-     public YearPicker(){
-
-     }
-
-    private static final int MAX_YEAR = 3000;
-    private static final int MIN_YEAR = 2020;
 
     private DatePickerDialog.OnDateSetListener listener;
     public Calendar cal = Calendar.getInstance();
 
+    private static final int MAX_YEAR = 3000;
+    private static final int MIN_YEAR = 2019;
 
-    public void setListener(DatePickerDialog.OnDateSetListener listener){
+    public void setListener(DatePickerDialog.OnDateSetListener listener) {
         this.listener = listener;
     }
 
     Button btnConfirm;
     Button btnCancel;
 
-    @Nullable
+    @NonNull
     @Override
-    public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        View view  = inflater.inflate(R.layout.year_picker, container,false);
-        Bundle bundle = getArguments();
-                String value = bundle.getString("key");
-                fragment = getActivity().getSupportFragmentManager().findFragmentByTag("year");
+    public Dialog onCreateDialog(@Nullable Bundle savedInstanceState) {
 
-                if (fragment != null) {
-                    DialogFragment dialogFragment = (DialogFragment) fragment;
-                    dialogFragment.dismiss();
-        }
-        return view;
+        AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
+        LayoutInflater inflater = getActivity().getLayoutInflater();
+
+        View dialog = inflater.inflate(R.layout.year_picker, null);
+
+        btnConfirm = dialog.findViewById(R.id.confirm_btn);
+        btnCancel = dialog.findViewById(R.id.cancel_btn);
+
+        final NumberPicker yearPicker = dialog.findViewById(R.id.picker_year);
+
+        btnCancel.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                YearPicker.this.getDialog().cancel();
+            }
+        });
+
+        btnConfirm.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                listener.onDateSet(null, yearPicker.getValue(), 0, 0);
+                YearPicker.this.getDialog().cancel();
+            }
+        });
+
+
+        int year = cal.get(Calendar.YEAR);
+        yearPicker.setMinValue(MIN_YEAR);
+        yearPicker.setMaxValue(MAX_YEAR);
+        yearPicker.setWrapSelectorWheel(false);
+        yearPicker.setDescendantFocusability(ViewGroup.FOCUS_BLOCK_DESCENDANTS);
+        yearPicker.setValue(year);
+        builder.setView(dialog);
+        builder.setView(dialog);
+        return builder.create();
     }
-    }
 
-    //    @NonNull
-//    @Override
-//    public Dialog onCreateDialog(@Nullable Bundle savedInstanceState) {
-//
 
-//        AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
-//        LayoutInflater inflater = getActivity().getLayoutInflater();
-//
-//        View dialog = inflater.inflate(R.layout.year_picker, null);
-//
-//        btnConfirm = dialog.findViewById(R.id.btn_confirm);
-//        btnCancel = dialog.findViewById(R.id.btn_cancle);
-//
-//        final NumberPicker yearPicker = dialog.findViewById(R.id.picker_year);
-//
-//        btnCancel.setOnClickListener(new View.OnClickListener() {
-//            @Override
-//            public void onClick(View view) {
-//                YearPicker.this.getDialog().cancel();
-//            }
-//        });
-//
-//        btnConfirm.setOnClickListener(new View.OnClickListener() {
-//            @Override
-//            public void onClick(View view) {
-//                listener.onDateSet(null, yearPicker.getValue(), 0,0);
-//                YearPicker.this.getDialog().cancel();
-//            }
-//        });
-//
-//        int year = cal.get(Calendar.YEAR);
-//        yearPicker.setMinValue(MIN_YEAR);
-//        yearPicker.setMaxValue(MAX_YEAR);
-//        yearPicker.setValue(year);
-//        builder.setView(dialog);
-//        builder.setView(dialog);
-//        return builder.create();
-//    }
+}
 
