@@ -55,6 +55,23 @@ public class DataBaseHelper extends SQLiteOpenHelper {
         }
     }
 
+    //테스트 보기
+    public String getAllData(){
+        db = getReadableDatabase();
+
+        Cursor cursor = db.rawQuery("select * from tb_fixed",null);
+        String result ="";
+        int i = 0;
+        while (cursor.moveToNext()){
+           result +=cursor.getString(cursor.getColumnIndex("id_m"))+"\n";
+           result += cursor.getInt(cursor.getColumnIndex("fixedMoney"))+"\n";
+           i++;
+
+        }
+
+        return result;
+    }
+
     public void insert(String id, String date, String time, String category, String kind, String money, String memo) {
         db = getWritableDatabase();
 
@@ -94,6 +111,7 @@ public class DataBaseHelper extends SQLiteOpenHelper {
 
     //Array 객체에 넣어 리턴
     public ArrayList<Items> getltems(String date) {
+        System.out.println("array 리턴");
         db = getReadableDatabase();
         Items item;
 
@@ -154,7 +172,7 @@ public class DataBaseHelper extends SQLiteOpenHelper {
         Cursor cursor = db.rawQuery(query,null);
 
         while (cursor.moveToNext()){
-            result = cursor.getString(0);
+            result = String.valueOf(cursor.getInt(cursor.getColumnIndex("fixedMoney")));
         }
         return result;
     }

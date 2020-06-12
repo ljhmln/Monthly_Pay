@@ -2,6 +2,7 @@ package com.example.monthly_household_account_book;
 
 import android.annotation.SuppressLint;
 import android.app.Activity;
+import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.Gravity;
@@ -40,38 +41,74 @@ public class Money extends Fragment {
 
     private View view;
     private TextView belence_txt, fixed_money_edit;
+    ListviewAdapter adapter;
+    ListView listView;
 
 
     //Main Adapter Field
     private ArrayList<Items> itemsArr;
     Add_Activity add_activity = new Add_Activity();
-    DataBaseHelper helper = new DataBaseHelper(getContext());
+    DataBaseHelper helper;
+
+    public interface OnDateChanged{
+         void refresh(ListviewAdapter adapter);
+
+    }
+
+
+
+    @Override
+    public void onAttach(@NonNull Context context) {
+        super.onAttach(context);
+        System.out.println("Money 프래그먼트 onAttach");
+
+        helper = new DataBaseHelper(getContext());
+        adapter = new ListviewAdapter(helper);
+        adapter.notifyDataSetChanged();
+
+
+        OnDateChanged re = (OnDateChanged) getActivity();
+        re.refresh(adapter);
+
+
+    }
 
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         view = inflater.inflate(R.layout.money, container, false);
 
+
         // 초기화
-        ListView listView = (ListView)view.findViewById(R.id.listview);
+        listView = (ListView)view.findViewById(R.id.listview);
         final TextView total_outgoing_txt = (TextView)view.findViewById(R.id.total_outgoing_txt);
         belence_txt  = (TextView)view.findViewById(R.id.belence_txt);
         Button add_btn = (Button)view.findViewById(R.id.add_btn);
         fixed_money_edit = (TextView)view.findViewById(R.id.fixed_money_edit);
 
+        listView.setAdapter(adapter);
+
+
+
         try{
             fixed_money_edit.setText(helper.getFixedMoney(MainActivity.dateRun.getNowYear_Month()));
         }catch (NullPointerException e){
+            e.printStackTrace();
             Toast.makeText(getContext(),"null!!",Toast.LENGTH_SHORT).show();
         }
 
 
-        DataBaseHelper helper = new DataBaseHelper(getContext());
-        itemsArr = helper.getltems(MainActivity.dateRun.getNowYear_Month());
-        ListviewAdapter adapter = new ListviewAdapter(itemsArr);
-        adapter.notifyDataSetChanged();
+//        Bundle bundle = getArguments();
+//        if(bundle!=null){
+//            fixed_money_edit.setText(bundle.getString("fixedMoney"));
+//        }
 
-        listView.setAdapter(adapter);
+
+
+//        itemsArr = helper.getltems(MainActivity.dateRun.getNowYear_Month());
+
+
+
 
         changeMoney();
 
@@ -157,6 +194,10 @@ public class Money extends Fragment {
     public void onResume() {
         super.onResume();
         FragmentActivity activity = getActivity();
+        adapter.notifyDataSetChanged();
+
+
+
 
         if (activity != null) {
             String date = testGetDate();

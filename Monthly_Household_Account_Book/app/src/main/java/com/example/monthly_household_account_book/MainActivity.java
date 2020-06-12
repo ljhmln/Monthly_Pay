@@ -27,7 +27,7 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 
-public class MainActivity extends AppCompatActivity {
+public class MainActivity extends AppCompatActivity implements Money.OnDateChanged {
 
     private BottomNavigationView bottomNavigationView;
     private FragmentManager fragmentManager;
@@ -48,6 +48,14 @@ public class MainActivity extends AppCompatActivity {
     private TextView fixed_money_edit;
 
     @Override
+    public void refresh(ListviewAdapter adapter){
+        adapter.notifyDataSetChanged();
+        setFrag(0);
+
+        System.out.println("리프레쉬");
+    }
+
+    @Override
     protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
 
@@ -56,6 +64,10 @@ public class MainActivity extends AppCompatActivity {
             fixed_money_edit.setText(data.getStringExtra("result"));
             DataBaseHelper helper = new DataBaseHelper(getApplicationContext());
             helper.setFixedMoney(fixed_money_edit.getText().toString(),dateRun.getNowYear_Month());
+
+            Bundle bundle = new Bundle(1);
+            bundle.putString("fixedMoney",data.getStringExtra("result"));
+            moneyPage.setArguments(bundle);
         }
     }
 
@@ -105,6 +117,7 @@ public class MainActivity extends AppCompatActivity {
         });
 
         moneyPage = new Money();
+
         chartPage = new Chart();
         savingPage = new Saving();
         calendarPage = new Calendar();

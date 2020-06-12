@@ -8,6 +8,8 @@ import android.view.ViewGroup;
 import android.widget.BaseAdapter;
 import android.widget.TextView;
 
+import com.example.monthly_household_account_book.DataBaseHelper;
+import com.example.monthly_household_account_book.MainActivity;
 import com.example.monthly_household_account_book.R;
 
 import java.util.ArrayList;
@@ -17,9 +19,14 @@ public class ListviewAdapter extends BaseAdapter {
     private Context con;
     LayoutInflater inflater;
 
-    public ListviewAdapter( ArrayList itemsArr) {
-        this.itemsArr = new ArrayList<Items>();
-        this.itemsArr.addAll(itemsArr);
+    public ListviewAdapter(DataBaseHelper helper) {
+        this.itemsArr = helper.getltems(MainActivity.dateRun.getNowYear_Month());
+//        this.itemsArr.addAll(itemsArr);
+        notifyDataSetChanged();
+        System.out.println("ListView 어댑터 생성자 : "+itemsArr.isEmpty());
+        for(Items item : itemsArr){
+            System.out.println("아이템 : "+ item.getKind());
+        }
 
     }
 
@@ -49,7 +56,9 @@ public class ListviewAdapter extends BaseAdapter {
             money_txt.setText(String.valueOf(listItem.getMoney())+"원");
 
         }
-        this.notifyDataSetChanged();
+        notifyDataSetChanged();
+        System.out.println("리스트 어댑터");
+
         return convertView;
     }
 

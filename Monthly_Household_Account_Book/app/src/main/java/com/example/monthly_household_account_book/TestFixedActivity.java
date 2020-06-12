@@ -5,6 +5,7 @@ import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.TextView;
 
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
@@ -13,6 +14,8 @@ public class TestFixedActivity extends AppCompatActivity {
 
     Button btn;
     EditText edit_money;
+    TextView data_beseView;
+
 
 
     @Override
@@ -22,6 +25,12 @@ public class TestFixedActivity extends AppCompatActivity {
 
         btn = (Button)findViewById(R.id.btn);
         edit_money = (EditText)findViewById(R.id.edit_money);
+        data_beseView = (TextView)findViewById(R.id.data_beseView);
+
+        DataBaseHelper helper = new DataBaseHelper(getApplicationContext());
+
+
+        data_beseView.setText(helper.getAllData());
 
         btn.setOnClickListener(new View.OnClickListener() {
             @Override

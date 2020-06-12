@@ -19,6 +19,12 @@
         android:hint="금액을 입력하세요."
         android:gravity="right"
         />
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:lines="10"
+        android:id="@+id/data_beseView"
+        />
 
     <Button
         android:id="@+id/btn"
