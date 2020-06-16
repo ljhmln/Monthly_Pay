@@ -87,6 +87,8 @@ public class Money extends Fragment {
         fixed_money_edit = (TextView)view.findViewById(R.id.fixed_money_edit);
 
         listView.setAdapter(adapter);
+        // 자동 스크롤
+        listView.setSelection(adapter.getCount()-1);
 
 
 
@@ -150,7 +152,8 @@ public class Money extends Fragment {
             }
             if(getArguments().getInt("result")==1){
                 changeMoney();
-                adapter.notifyDataSetChanged();
+                adapter.addItem(helper.getltems(MainActivity.dateRun.getNowYear_Month()));
+//                adapter.notifyDataSetChanged();
 
                 getArguments().remove("result");
                 getArguments().clear();
