@@ -16,16 +16,16 @@ public class DateRunnable implements Runnable {
             nowDate = new Date(System.currentTimeMillis());
 
             Dateformat = new SimpleDateFormat("yyyy");
-            year = Dateformat.format(nowDate);
+            this.year = Dateformat.format(nowDate);
 
             Dateformat = new SimpleDateFormat("MM");
-            month = Dateformat.format(nowDate);
+            this.month = Dateformat.format(nowDate);
 
             Dateformat = new SimpleDateFormat("dd");
-            day = Dateformat.format(nowDate);
+            this.day = Dateformat.format(nowDate);
 
             Dateformat = new SimpleDateFormat("HHmmss");
-            time = Dateformat.format(nowDate);
+            this.time = Dateformat.format(nowDate);
 
         }
 
@@ -41,6 +41,14 @@ public class DateRunnable implements Runnable {
     }
 
     public String getNowYear_Month() {
+        nowDate = new Date(System.currentTimeMillis());
+
+        Dateformat = new SimpleDateFormat("yyyy");
+        this.year = Dateformat.format(nowDate);
+
+        Dateformat = new SimpleDateFormat("MM");
+        this.month = Dateformat.format(nowDate);
+
         return year+month;
     }
 }

@@ -4,7 +4,7 @@ import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
-import android.text.Editable;
+
 import android.util.Log;
 
 import com.example.monthly_household_account_book.main_adapter.Items;
@@ -16,7 +16,6 @@ public class DataBaseHelper extends SQLiteOpenHelper {
     public static final int DATABASE_VERSION = 1;
     private ArrayList<Items> dataArr = new ArrayList<Items>();
     private SQLiteDatabase db;
-
 
 
     public DataBaseHelper(Context context) {
@@ -48,7 +47,7 @@ public class DataBaseHelper extends SQLiteOpenHelper {
 
     @Override
     public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
-        if(newVersion==DATABASE_VERSION){
+        if (newVersion == DATABASE_VERSION) {
             db.execSQL("drop table tb_data");
             db.execSQL("drop table tb_fixed");
             onCreate(db);
@@ -56,16 +55,16 @@ public class DataBaseHelper extends SQLiteOpenHelper {
     }
 
     //테스트 보기
-    public String getAllData(){
+    public String getAllData() {
         db = getReadableDatabase();
 
-        Cursor cursor = db.rawQuery("select * from tb_fixed",null);
-        String result ="";
+        Cursor cursor = db.rawQuery("select * from tb_fixed", null);
+        String result = "";
         int i = 0;
-        while (cursor.moveToNext()){
-           result +=cursor.getString(cursor.getColumnIndex("id_m"))+"\n";
-           result += cursor.getInt(cursor.getColumnIndex("fixedMoney"))+"\n";
-           i++;
+        while (cursor.moveToNext()) {
+            result += cursor.getString(cursor.getColumnIndex("id_m")) + "\n";
+            result += cursor.getInt(cursor.getColumnIndex("fixedMoney")) + "\n";
+            i++;
 
         }
 
@@ -112,13 +111,14 @@ public class DataBaseHelper extends SQLiteOpenHelper {
     //Array 객체에 넣어 리턴
     public ArrayList<Items> getltems(String date) {
         System.out.println("array 리턴");
+        Log.d("TAG", "" + getClass().getName() + "의 getItems 인자값 :" + date);
         db = getReadableDatabase();
         Items item;
 
-        String query = "select * from tb_data where id like '%"+date+"%'";
-        Cursor forList = db.rawQuery(query,null);
+        String query = "select * from tb_data where id like '%" + date + "%'";
+        Cursor forList = db.rawQuery(query, null);
 
-        while(forList.moveToNext()){
+        while (forList.moveToNext()) {
             item = new Items();
 
             String id = forList.getString(forList.getColumnIndex("id"));
@@ -146,32 +146,32 @@ public class DataBaseHelper extends SQLiteOpenHelper {
 
     public void setFixedMoney(String fixedMoney, String date) {
         db = getReadableDatabase();
-        String query = "select * from tb_fixed where id_m='"+date+"'";
+        String query = "select * from tb_fixed where id_m='" + date + "'";
 
         boolean check = true;
-        Cursor cursor = db.rawQuery(query,null);
+        Cursor cursor = db.rawQuery(query, null);
         int fixedM = Integer.parseInt(fixedMoney);
 
-        while (cursor.moveToNext()){
-            db= getWritableDatabase();
-            db.execSQL("update tb_fixed set fixedMoney='"+fixedM+"' where id_m='"+date+"'");
+        while (cursor.moveToNext()) {
+            db = getWritableDatabase();
+            db.execSQL("update tb_fixed set fixedMoney='" + fixedM + "' where id_m='" + date + "'");
             check = false;
         }
 
-        if(check){
-            db.execSQL("insert into tb_fixed (id_m, fixedMoney)  values ('"+date+"', '"+fixedM+"')");
+        if (check) {
+            db.execSQL("insert into tb_fixed (id_m, fixedMoney)  values ('" + date + "', '" + fixedM + "')");
         }
     }
 
-    public String getFixedMoney(String date){
+    public String getFixedMoney(String date) {
         db = getReadableDatabase();
         System.out.println(date);
-        String query = "select fixedMoney from tb_fixed where id_m='"+date+"'";
+        String query = "select fixedMoney from tb_fixed where id_m='" + date + "'";
 
-        String result ="";
-        Cursor cursor = db.rawQuery(query,null);
+        String result = "";
+        Cursor cursor = db.rawQuery(query, null);
 
-        while (cursor.moveToNext()){
+        while (cursor.moveToNext()) {
             result = String.valueOf(cursor.getInt(cursor.getColumnIndex("fixedMoney")));
         }
         return result;

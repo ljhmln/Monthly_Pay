@@ -46,7 +46,7 @@ public class Money extends Fragment {
 
 
     //Main Adapter Field
-    private ArrayList<Items> itemsArr;
+
     Add_Activity add_activity = new Add_Activity();
     DataBaseHelper helper;
 
@@ -136,6 +136,7 @@ public class Money extends Fragment {
 
                 add_activity.show(child,"child");
 
+
 //
             }
         });
@@ -149,6 +150,7 @@ public class Money extends Fragment {
             }
             if(getArguments().getInt("result")==1){
                 changeMoney();
+                adapter.notifyDataSetChanged();
 
                 getArguments().remove("result");
                 getArguments().clear();

@@ -36,7 +36,7 @@ public class MainActivity extends AppCompatActivity implements Money.OnDateChang
     private Chart chartPage;
     private Saving savingPage;
     private Calendar calendarPage;
-    private ArrayList<Items> itemsArr = new ArrayList<Items>();
+//    private ArrayList<Items> itemsArr = new ArrayList<Items>();
 
     private int income = 0;
     private int outgoing = 0;
@@ -184,42 +184,42 @@ public class MainActivity extends AppCompatActivity implements Money.OnDateChang
 //
 //    }
 
-    public ArrayList<Items> getItemsArr() {
-        return this.itemsArr;
+//    public ArrayList<Items> getItemsArr() {
+//        return this.itemsArr;
+//
+//    }
+//
+//    public int getBeleance() {
+//        income = 0;
+//        outgoing = 0;
+//        belence = 0;
+//        System.out.println("items 사이즈 : " + itemsArr.size());
+//        for (int i = 0; i < itemsArr.size(); i++) {
+//            if (itemsArr.get(i).getKind().equals("수입")) {
+//                income += Inte10ger.parseInt(itemsArr.get(i).getMoney());
+//                System.out.println("지출금 : " + itemsArr.get(i).getMoney());
+//            } else if (itemsArr.get(i).getKind().equals("지출")) {
+//                System.out.println("지출금 : " + itemsArr.get(i).getMoney());
+//                outgoing += Integer.parseInt(itemsArr.get(i).getMoney());
+//            }
+//
+//        }
+//
+//        belence = fixed_money - outgoing + income;
+//        System.out.println("밸런스 : " + belence);
+//        return belence;
+//    }
 
-    }
-
-    public int getBeleance() {
-        income = 0;
-        outgoing = 0;
-        belence = 0;
-        System.out.println("items 사이즈 : " + itemsArr.size());
-        for (int i = 0; i < itemsArr.size(); i++) {
-            if (itemsArr.get(i).getKind().equals("수입")) {
-                income += Integer.parseInt(itemsArr.get(i).getMoney());
-                System.out.println("지출금 : " + itemsArr.get(i).getMoney());
-            } else if (itemsArr.get(i).getKind().equals("지출")) {
-                System.out.println("지출금 : " + itemsArr.get(i).getMoney());
-                outgoing += Integer.parseInt(itemsArr.get(i).getMoney());
-            }
-
-        }
-
-        belence = fixed_money - outgoing + income;
-        System.out.println("밸런스 : " + belence);
-        return belence;
-    }
-
-    public int getOutgoing() {
-        getBeleance();
-        return outgoing;
-    }
-
-    public int getIncome() {
-        getBeleance();
-        return income;
-    }
-    //item Array test end
+//    public int getOutgoing() {
+//        getBeleance();
+//        return outgoing;
+//    }
+//
+//    public int getIncome() {
+//        getBeleance();
+//        return income;
+//    }
+//    //item Array test end
 
 
     @Override

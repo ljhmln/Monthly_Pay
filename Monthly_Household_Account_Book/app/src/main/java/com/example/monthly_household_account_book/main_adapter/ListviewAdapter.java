@@ -2,6 +2,7 @@ package com.example.monthly_household_account_book.main_adapter;
 
 import android.content.Context;
 import android.graphics.Color;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -15,18 +16,21 @@ import com.example.monthly_household_account_book.R;
 import java.util.ArrayList;
 
 public class ListviewAdapter extends BaseAdapter {
-    private ArrayList<Items> itemsArr;
+    private ArrayList<Items> itemsArr = new ArrayList<Items>();
     private Context con;
     LayoutInflater inflater;
+    DataBaseHelper helper;
 
     public ListviewAdapter(DataBaseHelper helper) {
-        this.itemsArr = helper.getltems(MainActivity.dateRun.getNowYear_Month());
-//        this.itemsArr.addAll(itemsArr);
+        this.helper = helper;
+        addItem(this.helper.getltems(MainActivity.dateRun.getNowYear_Month()));
         notifyDataSetChanged();
-        System.out.println("ListView 어댑터 생성자 : "+itemsArr.isEmpty());
+
         for(Items item : itemsArr){
+            //테스트
             System.out.println("아이템 : "+ item.getKind());
         }
+        Log.d("TAG","ListViewAdapter 생성됨. [Is itemsArr Empty?] : "+itemsArr.isEmpty());
 
     }
 
@@ -43,6 +47,7 @@ public class ListviewAdapter extends BaseAdapter {
         TextView kind_txt = (TextView)convertView.findViewById(R.id.kind_txt);
         TextView category_txt = (TextView)convertView.findViewById(R.id.category_txt);
         TextView money_txt = (TextView)convertView.findViewById(R.id.money_txt);
+
 
         Items listItem = itemsArr.get(position);
         if(listItem != null){
@@ -69,6 +74,8 @@ public class ListviewAdapter extends BaseAdapter {
             itemsArr.clear();
             itemsArr.addAll(arr);
             notifyDataSetChanged();
+        }else {
+            itemsArr.addAll(arr);
         }
 
     }
