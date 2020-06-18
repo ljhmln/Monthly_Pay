@@ -27,7 +27,7 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 
-public class MainActivity extends AppCompatActivity implements Money.OnDateChanged {
+public class MainActivity extends AppCompatActivity  {
 
     private BottomNavigationView bottomNavigationView;
     private FragmentManager fragmentManager;
@@ -47,13 +47,13 @@ public class MainActivity extends AppCompatActivity implements Money.OnDateChang
     /*수입금액 설정 테스트 코드 시작*/
     private TextView fixed_money_edit;
 
-    @Override
-    public void refresh(ListviewAdapter adapter){
-        adapter.notifyDataSetChanged();
-        setFrag(0);
-
-        System.out.println("리프레쉬");
-    }
+//    @Override
+//    public void refresh(ListviewAdapter adapter){
+//        adapter.notifyDataSetChanged();
+//        setFrag(0);
+//
+//        System.out.println("리프레쉬");
+//    }
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {

@@ -13,6 +13,7 @@ import com.example.monthly_household_account_book.DataBaseHelper;
 import com.example.monthly_household_account_book.MainActivity;
 import com.example.monthly_household_account_book.R;
 
+import java.text.DecimalFormat;
 import java.util.ArrayList;
 
 public class ListviewAdapter extends BaseAdapter {
@@ -44,9 +45,11 @@ public class ListviewAdapter extends BaseAdapter {
             convertView = inflater.inflate(R.layout.layout_listview,parent, false);
         }
 
+        TextView date_txt = (TextView)convertView.findViewById(R.id.date_txt);
         TextView kind_txt = (TextView)convertView.findViewById(R.id.kind_txt);
         TextView category_txt = (TextView)convertView.findViewById(R.id.category_txt);
         TextView money_txt = (TextView)convertView.findViewById(R.id.money_txt);
+        DecimalFormat decimalFormat = new DecimalFormat("###,###");
 
 
         Items listItem = itemsArr.get(position);
@@ -56,9 +59,11 @@ public class ListviewAdapter extends BaseAdapter {
             }else if((listItem.getKind()).equals("지출")){
                 kind_txt.setTextColor(Color.RED);
             }
+            StringBuffer dateWithdot = new StringBuffer(listItem.getDate());
+            date_txt.setText(dateWithdot.insert(2,"."));
             kind_txt.setText(String.valueOf(listItem.getKind()));
             category_txt.setText(String.valueOf(listItem.getCategory()));
-            money_txt.setText(String.valueOf(listItem.getMoney())+"원");
+            money_txt.setText(String.valueOf(decimalFormat.format(Double.parseDouble(listItem.getMoney())))+"원");
 
         }
         notifyDataSetChanged();

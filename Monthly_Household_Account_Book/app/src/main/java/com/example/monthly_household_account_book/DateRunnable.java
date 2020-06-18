@@ -12,35 +12,26 @@ public class DateRunnable implements Runnable {
     private SimpleDateFormat Dateformat;
 
     public void run() {
-        while (true) {
-            nowDate = new Date(System.currentTimeMillis());
-
-            Dateformat = new SimpleDateFormat("yyyy");
-            this.year = Dateformat.format(nowDate);
-
-            Dateformat = new SimpleDateFormat("MM");
-            this.month = Dateformat.format(nowDate);
-
-            Dateformat = new SimpleDateFormat("dd");
-            this.day = Dateformat.format(nowDate);
-
-            Dateformat = new SimpleDateFormat("HHmmss");
-            this.time = Dateformat.format(nowDate);
-
-        }
+//        while (true) {
+//            nowDate = new Date(System.currentTimeMillis());
+//
+//            Dateformat = new SimpleDateFormat("yyyy");
+//            this.year = Dateformat.format(nowDate);
+//
+//            Dateformat = new SimpleDateFormat("MM");
+//            this.month = Dateformat.format(nowDate);
+//
+//            Dateformat = new SimpleDateFormat("dd");
+//            this.day = Dateformat.format(nowDate);
+//
+//            Dateformat = new SimpleDateFormat("HHmmss");
+//            this.time = Dateformat.format(nowDate);
+//
+//        }
 
     }
 
-    public String getNowDate_Time() {
-        //tb_data id
-        return year + month + day + time;
-    }
-
-    public String getNowYear() {
-        return year;
-    }
-
-    public String getNowYear_Month() {
+    public void runningDate(String kindTime){
         nowDate = new Date(System.currentTimeMillis());
 
         Dateformat = new SimpleDateFormat("yyyy");
@@ -49,6 +40,39 @@ public class DateRunnable implements Runnable {
         Dateformat = new SimpleDateFormat("MM");
         this.month = Dateformat.format(nowDate);
 
+        Dateformat = new SimpleDateFormat("dd");
+        this.day = Dateformat.format(nowDate);
+        if(kindTime.equals("user"))
+            Dateformat = new SimpleDateFormat("HHmm");
+        else
+            Dateformat = new SimpleDateFormat("HHmmss");
+
+        this.time = Dateformat.format(nowDate);
+    }
+
+    public String getId() {
+        //tb_data id
+        runningDate("");
+        return year + month + day + time;
+    }
+
+    public String getTimeforUser(){
+        runningDate("user");
+        return time;
+    }
+    public String getMonthDay(){
+        runningDate("");
+        return month + day;
+    }
+
+    public String getNowYear() {
+        runningDate("");
+        return year;
+    }
+
+    public String getNowYear_Month() {
+        runningDate("");
         return year+month;
     }
+
 }

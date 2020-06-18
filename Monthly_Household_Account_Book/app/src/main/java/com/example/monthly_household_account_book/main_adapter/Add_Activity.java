@@ -58,7 +58,7 @@ public class Add_Activity extends BottomSheetDialogFragment  {
         btn_income = (RadioButton) view.findViewById(R.id.btn_income);
         btn_outgoing = (RadioButton) view.findViewById(R.id.btn_outgoing);
         //comma 추가를 위한 watcher 설정
-//        edit_money.addTextChangedListener(watcher);
+        edit_money.addTextChangedListener(watcher);
         final String inputDate = "";
         final String inputTime = "";
 
@@ -99,10 +99,10 @@ public class Add_Activity extends BottomSheetDialogFragment  {
                  /* 데이터 베이스 테스트 코드 시작*/
 
                 DataBaseHelper helper = new DataBaseHelper(getContext());
-                String nowdate = MainActivity.dateRun.getNowDate_Time();
+                String nowdate = MainActivity.dateRun.getId();
 
                 //String id, String date, String time, String category, String kind, String money, String memo
-                helper.insert(nowdate,"20200609",null,null,kind,(edit_money.getText()).toString(),null);
+                helper.insert(nowdate,MainActivity.dateRun.getMonthDay(),MainActivity.dateRun.getTimeforUser(),null,kind,(edit_money.getText()).toString().replace(",",""),null);
 
 
 

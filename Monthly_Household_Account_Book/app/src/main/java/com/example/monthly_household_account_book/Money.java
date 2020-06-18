@@ -40,7 +40,7 @@ import static android.view.Gravity.BOTTOM;
 public class Money extends Fragment {
 
     private View view;
-    private TextView belence_txt, fixed_money_edit;
+    private TextView belence_txt, fixed_money_edit, total_outgoing_txt;
     ListviewAdapter adapter;
     ListView listView;
 
@@ -67,8 +67,8 @@ public class Money extends Fragment {
         adapter.notifyDataSetChanged();
 
 
-        OnDateChanged re = (OnDateChanged) getActivity();
-        re.refresh(adapter);
+//        OnDateChanged re = (OnDateChanged) getActivity();
+//        re.refresh(adapter);
 
 
     }
@@ -81,10 +81,11 @@ public class Money extends Fragment {
 
         // 초기화
         listView = (ListView)view.findViewById(R.id.listview);
-        final TextView total_outgoing_txt = (TextView)view.findViewById(R.id.total_outgoing_txt);
+        total_outgoing_txt = (TextView)view.findViewById(R.id.total_outgoing_txt);
         belence_txt  = (TextView)view.findViewById(R.id.belence_txt);
         Button add_btn = (Button)view.findViewById(R.id.add_btn);
         fixed_money_edit = (TextView)view.findViewById(R.id.fixed_money_edit);
+
 
         listView.setAdapter(adapter);
         // 자동 스크롤
@@ -185,11 +186,19 @@ public class Money extends Fragment {
     public void changeMoney() {
         DecimalFormat decimalFormat = new DecimalFormat("###,###");
 //        belence_txt.setText(decimalFormat.format(((MainActivity)getActivity()).getBeleance()));
+
         /*
         테스트
          */
         DataBaseHelper helper = new DataBaseHelper(getContext());
-        belence_txt.setText(helper.getOutgoing("202006"));
+        String moneyFormat = decimalFormat.format(
+                Double.parseDouble(helper.getBelence(MainActivity.dateRun.getNowYear_Month())));
+        System.out.println(helper.getOutgoing(MainActivity.dateRun.getNowYear_Month()));
+        String outgoingFormat = decimalFormat.format(
+                Double.parseDouble(helper.getOutgoing(MainActivity.dateRun.getNowYear_Month())));
+
+        belence_txt.setText(moneyFormat);
+        total_outgoing_txt.setText(outgoingFormat);
     }
 
 
