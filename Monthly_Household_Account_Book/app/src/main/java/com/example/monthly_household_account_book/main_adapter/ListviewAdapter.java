@@ -24,7 +24,7 @@ public class ListviewAdapter extends BaseAdapter {
 
     public ListviewAdapter(DataBaseHelper helper) {
         this.helper = helper;
-        addItem(this.helper.getltems(MainActivity.dateRun.getNowYear_Month()));
+        addItem();
         notifyDataSetChanged();
 
         for(Items item : itemsArr){
@@ -73,15 +73,16 @@ public class ListviewAdapter extends BaseAdapter {
     }
 
 
-
-    public void addItem(ArrayList<Items> arr){
+//ArrayList<Items> arr
+    public void addItem(){
         if(itemsArr != null){
             itemsArr.clear();
-            itemsArr.addAll(arr);
-            notifyDataSetChanged();
+            itemsArr.addAll(helper.getltems(MainActivity.dateRun.getNowYear_Month()));
+
         }else {
-            itemsArr.addAll(arr);
+            itemsArr.addAll(helper.getltems(MainActivity.dateRun.getNowYear_Month()));
         }
+        notifyDataSetChanged();
 
     }
 

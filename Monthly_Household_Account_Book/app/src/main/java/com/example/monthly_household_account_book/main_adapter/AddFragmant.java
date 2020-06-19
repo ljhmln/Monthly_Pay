@@ -38,7 +38,7 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 
-public class Add_Activity extends BottomSheetDialogFragment  {
+public class AddFragmant extends BottomSheetDialogFragment  {
 
     TextView cancle, confirm;
     RadioButton btn_income, btn_outgoing;

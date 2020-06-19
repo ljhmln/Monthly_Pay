@@ -1,17 +1,12 @@
 package com.example.monthly_household_account_book;
 
-import android.annotation.SuppressLint;
-import android.app.Activity;
 import android.content.Context;
-import android.content.Intent;
 import android.os.Bundle;
-import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.Button;
-import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -21,20 +16,13 @@ import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentActivity;
 import androidx.fragment.app.FragmentManager;
-import androidx.fragment.app.FragmentTransaction;
-import androidx.recyclerview.widget.RecyclerView;
 
-import com.example.monthly_household_account_book.main_adapter.Add_Activity;
-import com.example.monthly_household_account_book.main_adapter.Items;
+import com.example.monthly_household_account_book.main_adapter.AddFragmant;
 import com.example.monthly_household_account_book.main_adapter.ListviewAdapter;
 
-import java.text.DateFormat;
 import java.text.DecimalFormat;
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
 import java.util.Date;
-
-import static android.view.Gravity.BOTTOM;
 
 
 public class Money extends Fragment {
@@ -43,18 +31,14 @@ public class Money extends Fragment {
     private TextView belence_txt, fixed_money_edit, total_outgoing_txt;
     ListviewAdapter adapter;
     ListView listView;
-
-
-    //Main Adapter Field
-
-    Add_Activity add_activity = new Add_Activity();
+    AddFragmant add_fragmant = new AddFragmant();
     DataBaseHelper helper;
 
+    //프래그먼트 refresh
     public interface OnDateChanged{
          void refresh(ListviewAdapter adapter);
 
     }
-
 
 
     @Override
@@ -65,11 +49,6 @@ public class Money extends Fragment {
         helper = new DataBaseHelper(getContext());
         adapter = new ListviewAdapter(helper);
         adapter.notifyDataSetChanged();
-
-
-//        OnDateChanged re = (OnDateChanged) getActivity();
-//        re.refresh(adapter);
-
 
     }
 
@@ -129,7 +108,7 @@ public class Money extends Fragment {
 
        final FragmentManager child = getChildFragmentManager();
         child.beginTransaction()
-                .add(add_activity, "child")
+                .add(add_fragmant, "child")
                 .addToBackStack(null);
 
 
@@ -137,7 +116,7 @@ public class Money extends Fragment {
             @Override
             public void onClick(View v) {
 
-                add_activity.show(child,"child");
+                add_fragmant.show(child,"child");
 
 
 //
@@ -148,12 +127,12 @@ public class Money extends Fragment {
 
         if(getArguments() != null){
             System.out.println("데이터 전달....");
-            if(!add_activity.isHidden()){
-                add_activity.dismiss();
+            if(!add_fragmant.isHidden()){
+                add_fragmant.dismiss();
             }
             if(getArguments().getInt("result")==1){
                 changeMoney();
-                adapter.addItem(helper.getltems(MainActivity.dateRun.getNowYear_Month()));
+                adapter.addItem();
 //                adapter.notifyDataSetChanged();
 
                 getArguments().remove("result");
@@ -170,56 +149,40 @@ public class Money extends Fragment {
         return view;
     }
 
-    String testGetDate() {
-        long now = System.currentTimeMillis();
-        Date nowDate = new Date(now);
-
-        SimpleDateFormat dateFormat = new SimpleDateFormat("MM");
-        String time;
-
-        return time = dateFormat.format(nowDate);
-    }
-
-
-
 
     public void changeMoney() {
+        //세 자리 콤마 추가
         DecimalFormat decimalFormat = new DecimalFormat("###,###");
-//        belence_txt.setText(decimalFormat.format(((MainActivity)getActivity()).getBeleance()));
 
-        /*
-        테스트
-         */
-        DataBaseHelper helper = new DataBaseHelper(getContext());
+        helper = new DataBaseHelper(getContext());
         String moneyFormat = decimalFormat.format(
                 Double.parseDouble(helper.getBelence(MainActivity.dateRun.getNowYear_Month())));
-        System.out.println(helper.getOutgoing(MainActivity.dateRun.getNowYear_Month()));
+
         String outgoingFormat = decimalFormat.format(
                 Double.parseDouble(helper.getOutgoing(MainActivity.dateRun.getNowYear_Month())));
 
         belence_txt.setText(moneyFormat);
         total_outgoing_txt.setText(outgoingFormat);
+
+        /*테스트 출력*/
+        System.out.println(helper.getOutgoing(MainActivity.dateRun.getNowYear_Month()));
+
     }
-
-
-
 
     @Override
     public void onResume() {
         super.onResume();
         FragmentActivity activity = getActivity();
-        adapter.notifyDataSetChanged();
-
-
 
 
         if (activity != null) {
-            String date = testGetDate();
-            if(Integer.parseInt(date)<10){
-                date = String.valueOf(Integer.parseInt(date));
+            String nowMonth = MainActivity.dateRun.getMonth();
+
+            if(Integer.parseInt(nowMonth)<10){
+                nowMonth = String.valueOf(Integer.parseInt(nowMonth));
             }
             //MainActivity의 메소드 사용하여 액션바 타이틀 변경.
-            ((MainActivity) activity).setActionBarTitle(date+"월 수입 지출 현황");
+            ((MainActivity) activity).setActionBarTitle(nowMonth+"월 수입 지출 현황");
         }
     }
 }

@@ -18,7 +18,7 @@
             </intent-filter>
         </activity>
         <activity
-            android:name=".main_adapter.Add_Activity"
+            android:name=".main_adapter.AddFragmant"
             tools:ignore="Instantiatable" />
         <activity
             android:name=".TestFixedActivity"

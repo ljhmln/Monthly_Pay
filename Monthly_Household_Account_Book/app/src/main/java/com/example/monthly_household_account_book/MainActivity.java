@@ -12,20 +12,9 @@ import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
-import android.view.View;
-import android.widget.AdapterView;
-import android.widget.Button;
-import android.widget.EditText;
-import android.widget.ListView;
 import android.widget.TextView;
 
-import com.example.monthly_household_account_book.main_adapter.Items;
-import com.example.monthly_household_account_book.main_adapter.ListviewAdapter;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
-
-import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Date;
 
 public class MainActivity extends AppCompatActivity  {
 
@@ -42,7 +31,7 @@ public class MainActivity extends AppCompatActivity  {
     private int outgoing = 0;
     private int belence = 0;
     public int fixed_money = 2000000;
-    static public DateRunnable dateRun = new DateRunnable();
+    static public DateRun dateRun = new DateRun();
 
     /*수입금액 설정 테스트 코드 시작*/
     private TextView fixed_money_edit;
@@ -167,67 +156,9 @@ public class MainActivity extends AppCompatActivity  {
         }
     }
 
-    //버튼을 눌렀을때 반응
-//    @Override
-//    public boolean onOptionsItemSelected(@NonNull MenuItem item) {
-//      switch (item.getItemId()){
-//          case R.id.setting:
-//
-//      }
-//    }
-
-    //item Array test
-//    public void setItemsArr(Items item) {
-//        this.itemsArr.add(item);
-//        adapter.addItem(itemsArr);
-//        adapter.notifyDataSetChanged();
-//
-//    }
-
-//    public ArrayList<Items> getItemsArr() {
-//        return this.itemsArr;
-//
-//    }
-//
-//    public int getBeleance() {
-//        income = 0;
-//        outgoing = 0;
-//        belence = 0;
-//        System.out.println("items 사이즈 : " + itemsArr.size());
-//        for (int i = 0; i < itemsArr.size(); i++) {
-//            if (itemsArr.get(i).getKind().equals("수입")) {
-//                income += Inte10ger.parseInt(itemsArr.get(i).getMoney());
-//                System.out.println("지출금 : " + itemsArr.get(i).getMoney());
-//            } else if (itemsArr.get(i).getKind().equals("지출")) {
-//                System.out.println("지출금 : " + itemsArr.get(i).getMoney());
-//                outgoing += Integer.parseInt(itemsArr.get(i).getMoney());
-//            }
-//
-//        }
-//
-//        belence = fixed_money - outgoing + income;
-//        System.out.println("밸런스 : " + belence);
-//        return belence;
-//    }
-
-//    public int getOutgoing() {
-//        getBeleance();
-//        return outgoing;
-//    }
-//
-//    public int getIncome() {
-//        getBeleance();
-//        return income;
-//    }
-//    //item Array test end
-
-
     @Override
     protected void onStart() {
         super.onStart();
-
-        Thread dateThread = new Thread(dateRun);
-        dateThread.start();
 
     }
 }

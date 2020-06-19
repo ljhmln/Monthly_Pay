@@ -55,12 +55,12 @@
         android:layout_margin="10dp"
         />
 
-    <DatePicker
-        android:id="@+id/date_pic"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:calendarViewShown="false"
-        android:datePickerMode="spinner" />
+<!--    <DatePicker-->
+<!--        android:id="@+id/date_pic"-->
+<!--        android:layout_width="match_parent"-->
+<!--        android:layout_height="wrap_content"-->
+<!--        android:calendarViewShown="false"-->
+<!--        android:datePickerMode="spinner" />-->
 
     <RadioGroup
         android:layout_width="match_parent"

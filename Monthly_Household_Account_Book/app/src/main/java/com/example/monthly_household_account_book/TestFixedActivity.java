@@ -17,7 +17,6 @@ public class TestFixedActivity extends AppCompatActivity {
     TextView data_beseView;
 
 
-
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
