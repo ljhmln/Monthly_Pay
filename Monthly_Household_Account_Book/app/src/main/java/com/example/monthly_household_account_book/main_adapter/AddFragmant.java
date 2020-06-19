@@ -33,12 +33,13 @@ import java.util.Date;
 
 public class AddFragmant extends BottomSheetDialogFragment  {
 
-    TextView cancle, confirm,date_txt;
+    TextView cancle, confirm,date_txt,time_txt;
     RadioButton btn_income, btn_outgoing;
     EditText edit_money;
     DecimalFormat decimalFormat = new DecimalFormat("###,###");
     String money_result = "";
-    int y,m,d;
+    int selYear,selMonth,selDay;
+
 
 
     @Nullable
@@ -52,6 +53,7 @@ public class AddFragmant extends BottomSheetDialogFragment  {
         btn_income = (RadioButton) view.findViewById(R.id.btn_income);
         btn_outgoing = (RadioButton) view.findViewById(R.id.btn_outgoing);
         date_txt = (Button)view.findViewById(R.id.date_txt);
+        time_txt = (TextView)view.findViewById(R.id.time_txt);
 
         //comma 추가를 위한 watcher 설정
         edit_money.addTextChangedListener(watcher);
@@ -68,6 +70,8 @@ public class AddFragmant extends BottomSheetDialogFragment  {
         result : 0 -> 취소 버튼
         result : 1 -> 추가 버튼
          */
+
+        time_txt.setText(""+new SimpleDateFormat("HH:mm").format(new Date(System.currentTimeMillis())));
 
         cancle.setOnClickListener((v)->{
 
@@ -89,8 +93,15 @@ public class AddFragmant extends BottomSheetDialogFragment  {
                 DataBaseHelper helper = new DataBaseHelper(getContext());
                 String nowdate = MainActivity.dateRun.getId();
 
+              String userSeleDate ="";
+
+                if(selMonth<10)
+                    userSeleDate += "0"+selMonth;
+                if(selDay<10)
+                    userSeleDate += "0"+selDay;
+
                 //String id, String date, String time, String category, String kind, String money, String memo
-                helper.insert(nowdate,MainActivity.dateRun.getMonthDay(),MainActivity.dateRun.getTimeforUser(),null,kind,(edit_money.getText()).toString().replace(",",""),null);
+                helper.insert(nowdate,userSeleDate,MainActivity.dateRun.getTimeforUser(),null,kind,(edit_money.getText()).toString().replace(",",""),null);
             /*데이터베이스 테스트 코드 끝*/
 
                 // Money 프래그먼트에 정보 전달
@@ -140,49 +151,26 @@ public class AddFragmant extends BottomSheetDialogFragment  {
         super.onResume();
     }
 
-
     private void showDateDialog() {
 
-        y = Integer.parseInt(new SimpleDateFormat("yyyy").format(new Date(System.currentTimeMillis())));
-        m = Integer.parseInt(new SimpleDateFormat("MM").format(new Date(System.currentTimeMillis())));
-        d = Integer.parseInt(new SimpleDateFormat("dd").format(new Date(System.currentTimeMillis())));
+        int nowy = Integer.parseInt(new SimpleDateFormat("yyyy").format(new Date(System.currentTimeMillis())));
+        int nowm = Integer.parseInt(new SimpleDateFormat("MM").format(new Date(System.currentTimeMillis())));
+        int nowd = Integer.parseInt(new SimpleDateFormat("dd").format(new Date(System.currentTimeMillis())));
 
-//        Calendar year = new Calendar(new Date(System.currentTimeMillis()));
         DatePickerDialog datePickerDialog = new DatePickerDialog(getContext(), new DatePickerDialog.OnDateSetListener() {
-
             @Override
             public void onDateSet(DatePicker view, int year, int month, int dayOfMonth) {
 
-                y = year;
-                m = month+1;
-                d = dayOfMonth;
-                date_txt.setText(y+"년 "+m+"월 "+d+"일");
+                selYear = year;
+                selMonth = month+1;
+                selDay = dayOfMonth;
+                date_txt.setText(selYear+"년 "+selMonth+"월 "+selDay+"일");
 
             }
 
-        },y,m-1,d);
-
-//        DatePickerDialog.OnClickListener btnListener = new DatePickerDialog.OnClickListener(){
-//            @Override
-//            public void onClick(DialogInterface dialog, int which) {
-//                if(which==dialog.BUTTON_POSITIVE){
-//                    date_txt.setText(String.valueOf(y)+"년 "+String.valueOf(m)+"월 "+String.valueOf(d)+"일");
-//                    Toast.makeText(getContext(),""+y+""+m+""+d,Toast.LENGTH_SHORT).show();
-//                }
-//            }
-//
-//
-//        };
-//        datePickerDialog.setButton(DatePickerDialog.BUTTON_POSITIVE,"확인", btnListener);
-
-
-//        date_txt.setText(String.valueOf(y)+"년 "+String.valueOf(m)+"월 "+String.valueOf(d)+"일");
-
+        },nowy,nowm-1,nowd);
 
         datePickerDialog.show();
-
-
-
 
     }
 
