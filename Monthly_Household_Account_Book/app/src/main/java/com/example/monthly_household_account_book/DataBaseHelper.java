@@ -95,6 +95,7 @@ public class DataBaseHelper extends SQLiteOpenHelper {
 
     public String getIncome(String date) {
 
+
         if(!isEmpty()){
             int result = 0;
 
@@ -106,7 +107,7 @@ public class DataBaseHelper extends SQLiteOpenHelper {
             System.out.println("getIncome date 값 = "+date);
             while (income.moveToNext()) {
                 result += income.getInt(income.getColumnIndex("money"));
-                System.out.println("값= "+(i++)+">"+result);
+                System.out.println("income 값= "+(i++)+">"+result);
                 System.out.println(income.getInt(income.getColumnIndex("money")));
             }
             return String.valueOf(result);
@@ -119,18 +120,18 @@ public class DataBaseHelper extends SQLiteOpenHelper {
     public String getOutgoing(String date) {
         System.out.println("getOutgoing 들어옴");
         if(!isEmpty()){
-            Cursor outgoing = dbRead.rawQuery("select sum(money) from tb_data where date like '%" + date + "%' and kind='지출'", null);
-            String result = "";
+            Cursor outgoing = dbRead.rawQuery("select * from tb_data where id like '%" + date + "%' and kind='지출'", null);
+            int result = 0;
 
             System.out.println("isEmpty : "+ isEmpty());
 
 
                 while (outgoing.moveToNext()) {
-                    result = String.valueOf(outgoing.getInt(0));
-                    System.out.println("result : "+ result);
+                    result += outgoing.getInt(outgoing.getColumnIndex("money"));
+                    System.out.println("outgoing result : "+ result);
                 }
-                if(result!=null)
-                    return result;
+                if(result!=0)
+                    return String.valueOf(result);
                 else
                     return "0";
 

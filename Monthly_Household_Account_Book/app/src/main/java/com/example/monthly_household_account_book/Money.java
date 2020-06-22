@@ -164,6 +164,7 @@ public class Money extends Fragment {
         belence_txt.setText(moneyFormat);
         total_outgoing_txt.setText(outgoingFormat);
 
+
         /*테스트 출력*/
         System.out.println(helper.getOutgoing(MainActivity.dateRun.getNowYear_Month()));
 
