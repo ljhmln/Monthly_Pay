@@ -21,4 +21,9 @@
         android:enabled="true"
         android:icon="@drawable/ic_calender"
         android:id="@+id/calendar"/>
+    <item
+        android:title="날씨"
+        android:enabled="true"
+        android:icon="@drawable/ic_sunny"
+        android:id="@+id/weather"/>
 </menu>

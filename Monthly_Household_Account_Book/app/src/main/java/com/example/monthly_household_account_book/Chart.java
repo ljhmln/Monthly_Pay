@@ -71,8 +71,8 @@ public class Chart extends Fragment {
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         view = inflater.inflate(R.layout.chart, container, false);
-        barChart = (BarChart) view.findViewById(R.id.graph);
-        listView = (ListView) view.findViewById(R.id.listView);
+//        barChart = (BarChart) view.findViewById(R.id.graph);
+//        listView = (ListView) view.findViewById(R.id.listView);
 
         //MainActivity의 메소드 사용하여 액션바 타이틀 변경.
         ((MainActivity) getActivity()).setActionBarTitle("월별 수입 / 지출 통계");

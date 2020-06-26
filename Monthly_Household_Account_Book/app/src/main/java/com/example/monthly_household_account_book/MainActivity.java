@@ -29,6 +29,7 @@ public class MainActivity extends AppCompatActivity {
     private Chart chartPage;
     private Saving savingPage;
     private Calendar calendarPage;
+    private Weather weatherPage;
     private ArrayList<Items> itemsArr = new ArrayList<Items>();
     public ListviewAdapter adapter = new ListviewAdapter(itemsArr);
     private int income = 0 ;
@@ -62,6 +63,9 @@ public class MainActivity extends AppCompatActivity {
                     case R.id.calendar:
                         setFrag(3);
                         break;
+                    case R.id.weather:
+                        setFrag(4);
+                        break;
                 }
 
                 return true;
@@ -72,6 +76,7 @@ public class MainActivity extends AppCompatActivity {
         chartPage = new Chart();
         savingPage = new Saving();
         calendarPage = new Calendar();
+        weatherPage = new Weather();
         setFrag(0);
 
 
@@ -97,6 +102,10 @@ public class MainActivity extends AppCompatActivity {
                 break;
             case 3:
                 fragmentTransaction.replace(R.id.main_frame, calendarPage);
+                fragmentTransaction.commit();
+                break;
+            case 4:
+                fragmentTransaction.replace(R.id.main_frame, weatherPage);
                 fragmentTransaction.commit();
                 break;
         }
