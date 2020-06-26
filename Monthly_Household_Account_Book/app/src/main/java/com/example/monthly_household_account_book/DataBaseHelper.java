@@ -15,8 +15,8 @@ public class DataBaseHelper extends SQLiteOpenHelper {
 
     public static final int DATABASE_VERSION = 1;
     private ArrayList<Items> dataArr = new ArrayList<Items>();
-    private SQLiteDatabase dbWrite = getWritableDatabase();
-    private SQLiteDatabase dbRead = getReadableDatabase();
+    public SQLiteDatabase dbWrite = getWritableDatabase();
+    public SQLiteDatabase dbRead = getReadableDatabase();
 
 
     public DataBaseHelper(Context context) {
@@ -40,7 +40,7 @@ public class DataBaseHelper extends SQLiteOpenHelper {
         //tb_data -> id
         //tb_fixed
         String dataSQL = "create table tb_data " +
-                "(id varchar(20) primary key," +
+                "(_id varchar(20) primary key," +
                 "date varchar(10)," +
                 "time varchar(10)," +
                 "category varchar(20)," +
@@ -87,7 +87,7 @@ public class DataBaseHelper extends SQLiteOpenHelper {
     public void insert(String id, String date, String time, String category, String kind, String money, String memo) {
 
 
-        dbWrite.execSQL("insert into tb_data (id, date, time, category, kind, money, memo) " +
+        dbWrite.execSQL("insert into tb_data (_id, date, time, category, kind, money, memo) " +
                 "values ('" + id + "','" + date + "','" + time + "','" + category + "','" + kind + "','" + money + "','" + memo + "')");
         Log.e("error", "SQLite insert error");
 
@@ -95,7 +95,7 @@ public class DataBaseHelper extends SQLiteOpenHelper {
 
     public void dropData(String id){
 //        delete from 테이블명 where 속성1='값' and/or 속성2='값'….;
-        dbWrite.execSQL("delete from tb_data where id='"+id+"'");
+        dbWrite.execSQL("delete from tb_data where _id='"+id+"'");
 
     }
 
@@ -185,13 +185,13 @@ public class DataBaseHelper extends SQLiteOpenHelper {
 
         Items item;
 
-        String query = "select * from tb_data where id like '%" + date + "%'";
+        String query = "select * from tb_data where _id like '%" + date + "%'";
         Cursor forList = dbRead.rawQuery(query, null);
 
         while (forList.moveToNext()) {
             item = new Items();
 
-            String id = forList.getString(forList.getColumnIndex("id"));
+            String id = forList.getString(forList.getColumnIndex("_id"));
             item.setId(id);
             String kind = forList.getString(forList.getColumnIndex("kind"));
             item.setKind(kind);

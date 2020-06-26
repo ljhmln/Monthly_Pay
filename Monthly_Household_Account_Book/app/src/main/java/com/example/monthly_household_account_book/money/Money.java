@@ -4,6 +4,8 @@ import android.app.AlertDialog;
 import android.app.Dialog;
 import android.content.Context;
 import android.content.DialogInterface;
+import android.database.Cursor;
+import android.database.sqlite.SQLiteDatabase;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
@@ -41,6 +43,7 @@ public class Money extends Fragment {
     DataBaseHelper helper;
     ListviewAdapter adapter;
     RefreshHandler refreshHandler;
+    Cursor cursor;
     //프래그먼트 refresh
     public interface OnDateChanged{
          void refresh(ListviewAdapter adapter);
@@ -48,12 +51,15 @@ public class Money extends Fragment {
     }
 
 
+
     @Override
     public void onAttach(@NonNull Context context) {
         super.onAttach(context);
         System.out.println("Money 프래그먼트 onAttach");
         helper = new DataBaseHelper(getContext());
-        adapter = new ListviewAdapter(helper);
+        cursor = helper.dbRead.rawQuery("select * from tb_data",null);
+
+        adapter = new ListviewAdapter(helper,context, cursor);
     }
 
     @Nullable
@@ -199,7 +205,7 @@ public class Money extends Fragment {
                             @Override
                             public void onClick(DialogInterface dialog, int which) {
                                 helper.dropData(adapter.getItemTest(position));
-                                adapter.addItem();
+                                adapter.notifyDataSetChanged();
 //                                Message m = refreshHandler.obtainMessage(1);
                                 refreshHandler.sendEmptyMessage(1);
 
