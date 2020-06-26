@@ -1,4 +1,4 @@
-package com.example.monthly_household_account_book.main_adapter;
+package com.example.monthly_household_account_book.money;
 
 import android.content.Context;
 import android.graphics.Color;
@@ -12,6 +12,7 @@ import android.widget.TextView;
 import com.example.monthly_household_account_book.DataBaseHelper;
 import com.example.monthly_household_account_book.MainActivity;
 import com.example.monthly_household_account_book.R;
+import com.example.monthly_household_account_book.money.Items;
 
 import java.text.DecimalFormat;
 import java.util.ArrayList;
@@ -23,9 +24,8 @@ public class ListviewAdapter extends BaseAdapter {
     DataBaseHelper helper;
 
     public ListviewAdapter(DataBaseHelper helper) {
-        this.helper = helper;
+        this.helper =helper;
         addItem();
-        notifyDataSetChanged();
 
         for(Items item : itemsArr){
             //테스트
@@ -35,55 +35,75 @@ public class ListviewAdapter extends BaseAdapter {
 
     }
 
+
     @Override
     public View getView(int position, View convertView, ViewGroup parent) {
-        con = parent.getContext();
-        this.inflater = (LayoutInflater)this.con.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
 
+        ViewHolder holder;
+        View rootView = null;
         //custom list view layout 넣기
         if(convertView == null){
-            convertView = inflater.inflate(R.layout.layout_listview,parent, false);
+            con = parent.getContext();
+            this.inflater = (LayoutInflater)this.con.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+            rootView = inflater.inflate(R.layout.layout_listview,parent, false);
+            holder = new ViewHolder();
+            holder.date_txt = (TextView)convertView.findViewById(R.id.date_txt);
+            holder.kind_txt = (TextView)convertView.findViewById(R.id.kind_txt);
+            holder.category_txt = (TextView)convertView.findViewById(R.id.category_txt);
+            holder.money_txt = (TextView)convertView.findViewById(R.id.money_txt);
+            rootView.setTag(holder);
+        }else{
+            convertView = rootView;
+            holder = (ViewHolder)rootView.getTag();
         }
-
-        TextView date_txt = (TextView)convertView.findViewById(R.id.date_txt);
-        TextView kind_txt = (TextView)convertView.findViewById(R.id.kind_txt);
-        TextView category_txt = (TextView)convertView.findViewById(R.id.category_txt);
-        TextView money_txt = (TextView)convertView.findViewById(R.id.money_txt);
         DecimalFormat decimalFormat = new DecimalFormat("###,###");
-
 
         Items listItem = itemsArr.get(position);
         if(listItem != null){
+
             if((listItem.getKind()).equals("수입")){
-                kind_txt.setTextColor(Color.BLUE);
+                holder.kind_txt.setTextColor(Color.BLUE);
             }else if((listItem.getKind()).equals("지출")){
-                kind_txt.setTextColor(Color.RED);
+                holder.kind_txt.setTextColor(Color.RED);
             }
             StringBuffer dateWithdot = new StringBuffer(listItem.getDate());
-            date_txt.setText(dateWithdot.insert(2,"."));
-            kind_txt.setText(String.valueOf(listItem.getKind()));
-            category_txt.setText(String.valueOf(listItem.getCategory()));
-            money_txt.setText(String.valueOf(decimalFormat.format(Double.parseDouble(listItem.getMoney())))+"원");
+            holder.date_txt.setText(dateWithdot.insert(2,"."));
+            holder.kind_txt.setText(String.valueOf(listItem.getKind()));
+            holder.category_txt.setText(String.valueOf(listItem.getCategory()));
+            holder.money_txt.setText(String.valueOf(decimalFormat.format(Double.parseDouble(listItem.getMoney())))+"원");
 
         }
-        notifyDataSetChanged();
+
         System.out.println("리스트 어댑터");
 
-        return convertView;
+        return rootView;
+    }
+
+    class ViewHolder {
+        TextView date_txt, kind_txt, category_txt, money_txt;
     }
 
 
 //ArrayList<Items> arr
     public void addItem(){
         if(itemsArr != null){
+            System.out.println("itemArr != null");
             itemsArr.clear();
+            notifyDataSetChanged();
+            System.out.println("itemArr size : "+itemsArr.size());
             itemsArr.addAll(helper.getltems(MainActivity.dateRun.getNowYear_Month()));
+            notifyDataSetChanged();
 
-        }else {
+        }else if(itemsArr == null){
+            System.out.println("itemArr == null");
             itemsArr.addAll(helper.getltems(MainActivity.dateRun.getNowYear_Month()));
         }
-        notifyDataSetChanged();
+//        notifyDataSetChanged();
 
+    }
+
+    public String getItemTest (int position){
+        return itemsArr.get(position).getId();
     }
 
     @Override
@@ -95,6 +115,9 @@ public class ListviewAdapter extends BaseAdapter {
     public Object getItem(int position) {
         return itemsArr.get(position);
     }
+
+
+
 
     @Override
     public long getItemId(int position) {

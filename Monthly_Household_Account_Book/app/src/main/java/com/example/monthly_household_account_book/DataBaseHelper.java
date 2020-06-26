@@ -7,7 +7,7 @@ import android.database.sqlite.SQLiteOpenHelper;
 
 import android.util.Log;
 
-import com.example.monthly_household_account_book.main_adapter.Items;
+import com.example.monthly_household_account_book.money.Items;
 
 import java.util.ArrayList;
 
@@ -90,6 +90,12 @@ public class DataBaseHelper extends SQLiteOpenHelper {
         dbWrite.execSQL("insert into tb_data (id, date, time, category, kind, money, memo) " +
                 "values ('" + id + "','" + date + "','" + time + "','" + category + "','" + kind + "','" + money + "','" + memo + "')");
         Log.e("error", "SQLite insert error");
+
+    }
+
+    public void dropData(String id){
+//        delete from 테이블명 where 속성1='값' and/or 속성2='값'….;
+        dbWrite.execSQL("delete from tb_data where id='"+id+"'");
 
     }
 

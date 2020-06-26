@@ -14,9 +14,11 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.widget.TextView;
 
+import com.example.monthly_household_account_book.money.ListviewAdapter;
+import com.example.monthly_household_account_book.money.Money;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 
-public class MainActivity extends AppCompatActivity  {
+public class MainActivity extends AppCompatActivity implements Money.OnDateChanged  {
 
     private BottomNavigationView bottomNavigationView;
     private FragmentManager fragmentManager;
@@ -36,13 +38,13 @@ public class MainActivity extends AppCompatActivity  {
     /*수입금액 설정 테스트 코드 시작*/
     private TextView fixed_money_edit;
 
-//    @Override
-//    public void refresh(ListviewAdapter adapter){
-//        adapter.notifyDataSetChanged();
-//        setFrag(0);
-//
-//        System.out.println("리프레쉬");
-//    }
+    @Override
+    public void refresh(ListviewAdapter adapter){
+        adapter.notifyDataSetChanged();
+        setFrag(0);
+
+        System.out.println("리프레쉬");
+    }
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {

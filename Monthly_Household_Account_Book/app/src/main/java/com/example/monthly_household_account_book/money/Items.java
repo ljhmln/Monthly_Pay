@@ -1,4 +1,4 @@
-package com.example.monthly_household_account_book.main_adapter;
+package com.example.monthly_household_account_book.money;
 
 public class Items {
 

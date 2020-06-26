@@ -1,4 +1,4 @@
-package com.example.monthly_household_account_book.main_adapter;
+package com.example.monthly_household_account_book.money;
 
 import android.app.DatePickerDialog;
 import android.content.DialogInterface;
@@ -97,8 +97,12 @@ public class AddFragmant extends BottomSheetDialogFragment  {
 
                 if(selMonth<10)
                     userSeleDate += "0"+selMonth;
+                else
+                    userSeleDate += selMonth;
                 if(selDay<10)
                     userSeleDate += "0"+selDay;
+                else
+                    userSeleDate += selDay;
 
                 //String id, String date, String time, String category, String kind, String money, String memo
                 helper.insert(nowdate,userSeleDate,MainActivity.dateRun.getTimeforUser(),null,kind,(edit_money.getText()).toString().replace(",",""),null);
