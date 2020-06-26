@@ -49,6 +49,7 @@ public class DataBaseHelper extends SQLiteOpenHelper {
                 "money int," +
                 "memo varchar(30))";
 
+        // 고정금액 테이블
         String fixedSQL = "create table tb_fixed " +
                 "(id_m varchar(10) primary key," +
                 "fixedMoney int)";
@@ -93,6 +94,7 @@ public class DataBaseHelper extends SQLiteOpenHelper {
 
     }
 
+    //수입금액 가져오기
     public String getIncome(String date) {
 
 
@@ -117,6 +119,7 @@ public class DataBaseHelper extends SQLiteOpenHelper {
 
     }
 
+    //지출금액 가져오기
     public String getOutgoing(String date) {
         System.out.println("getOutgoing 들어옴");
         if(!isEmpty()){
@@ -142,6 +145,7 @@ public class DataBaseHelper extends SQLiteOpenHelper {
 
     }
 
+    //남은금액 가져오기
     public String getBelence(String date) {
 
         String income = getIncome(date);
@@ -171,6 +175,7 @@ public class DataBaseHelper extends SQLiteOpenHelper {
 
 
     }
+
 
     //Array 객체에 넣어 리턴
     public ArrayList<Items> getltems(String date) {
@@ -204,7 +209,7 @@ public class DataBaseHelper extends SQLiteOpenHelper {
     }
 
 
-
+    //고정금액 수정
     public void setFixedMoney(String fixedMoney, String date) {
 
         String query = "select * from tb_fixed where id_m='" + date + "'";
@@ -223,6 +228,8 @@ public class DataBaseHelper extends SQLiteOpenHelper {
         }
     }
 
+
+    //고정금액 가져오기
     public String getFixedMoney(String date) {
 
         if(!isEmpty()){
