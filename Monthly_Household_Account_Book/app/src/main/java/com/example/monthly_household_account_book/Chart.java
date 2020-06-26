@@ -3,9 +3,12 @@ package com.example.monthly_household_account_book;
 import android.app.DatePickerDialog;
 import android.app.Dialog;
 import android.content.Intent;
+import android.content.res.Resources;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Typeface;
+import android.graphics.drawable.ColorDrawable;
+import android.graphics.drawable.Drawable;
 import android.nfc.Tag;
 import android.os.Bundle;
 
@@ -15,6 +18,7 @@ import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.Window;
+import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.DatePicker;
 import android.widget.ImageButton;
@@ -42,6 +46,7 @@ import com.github.mikephil.charting.charts.BarLineChartBase;
 import com.github.mikephil.charting.components.AxisBase;
 import com.github.mikephil.charting.components.Description;
 import com.github.mikephil.charting.components.Legend;
+import com.github.mikephil.charting.components.MarkerView;
 import com.github.mikephil.charting.components.XAxis;
 import com.github.mikephil.charting.components.YAxis;
 import com.github.mikephil.charting.data.BarData;
@@ -62,6 +67,7 @@ import com.github.mikephil.charting.utils.MPPointD;
 import com.github.mikephil.charting.utils.ViewPortHandler;
 
 
+import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Calendar;
@@ -70,39 +76,27 @@ import java.util.List;
 
 public class Chart extends Fragment {
 
-   public  Calendar cal = Calendar.getInstance();
+    Calendar calendar = Calendar.getInstance();
+    int year = calendar.get(Calendar.YEAR);
+    NumberPicker numberPicker;
 
     int i = 0;
-    ViewPager viewPager;
-    private Chart_Fragment1 chart_fragment1;
-    private Chart_Fragment2 chart_fragment2;
-    private Chart_Fragment3 chart_fragment3;
-    private Chart_Fragment4 chart_fragment4;
-
-    YearPicker yearPicker = new YearPicker();
-    int year = cal.get(Calendar.YEAR);
 
 
     private View view;
     TextView yearText;
     ImageButton leftBtn, rightBtn;
 
-//    BarChart barChart;
-//    ArrayList<IBarDataSet> dataSets = new ArrayList<>();
-//    float defaultBarWidth = -1;
-//    List<String> xAxisValues = new ArrayList<>(Arrays.asList("1월","2월","3월","4월","5월","6월","7월","8월","9월","10월","11월","12월"));
-//    ListView listView;
-//    List<Integer> money = new ArrayList<>(Arrays.asList(1800000, 0, 1800000, 0, 0, 1200000, 1800000, 1300000, 0, 1700000,1100000, 1200000));
-//    List<Integer> minusMoney = new ArrayList<>(Arrays.asList(2200000,0,1150000,0,0,1000000,1700000,1200000,0,1650000,1100000,1200000));
-//
+    BarChart barChart;
+    ArrayList<IBarDataSet> dataSets = new ArrayList<>();
+    float defaultBarWidth = -1;
+    List<String> xAxisValues = new ArrayList<>(Arrays.asList("1월","2월","3월","4월","5월","6월","7월","8월","9월","10월","11월","12월"));
+    ListView listView;
+    List<Integer> money = new ArrayList<>(Arrays.asList(1800000));
+    List<Integer> minusMoney = new ArrayList<>(Arrays.asList(2200000));
 
-//    DatePickerDialog.OnDateSetListener d = new DatePickerDialog.OnDateSetListener() {
-//        @Override
-//        public void onDateSet(DatePicker datePicker, int i, int i1, int i2) {
-//            Intent intent = new Intent(getActivity(),YearPicker.class);
-//            startActivity(intent);
-//        }
-//    };
+
+
 
 
     @Nullable
@@ -111,339 +105,279 @@ public class Chart extends Fragment {
         view = inflater.inflate(R.layout.chart, container, false);
 
         yearText = (TextView) view.findViewById(R.id.year);
-        yearText.setText(Integer.toString(year));
-
-        leftBtn = (ImageButton) view.findViewById(R.id.leftBtn);
-        rightBtn = (ImageButton) view.findViewById(R.id.rightBtn);
-
-        leftBtn.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                    yearText.setText(Integer.toString(--year) );
-
-            }
-        });
-
-        rightBtn.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-
-                    yearText.setText(Integer.toString(++year));
 
 
-            }
-        });
 
-        final FragmentManager fragmentManager = getChildFragmentManager();
-        fragmentManager.beginTransaction().add(yearPicker, "yearPicker")
-                .addToBackStack(null);
+
+        yearText.setText(String.valueOf(year));
+
+
+
+
 
 
         yearText.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                yearPicker.show(fragmentManager, "yearPicker");
+
+            showYearPicker();
 
             }
         });
 
-        if(getArguments() != null){
-            if(!yearPicker.isHidden()){
-                yearPicker.dismiss();
-            }
-        }
+
 
 
         //MainActivity의 메소드 사용하여 액션바 타이틀 변경.
         ((MainActivity) getActivity()).setActionBarTitle("월별 수입 / 지출 통계");
 
 
-        chart_fragment1 = new Chart_Fragment1();
-        chart_fragment2 = new Chart_Fragment2();
-        chart_fragment3 = new Chart_Fragment3();
-        chart_fragment4 = new Chart_Fragment4();
-        viewPager = (ViewPager) view.findViewById(R.id.viewPager);
-        viewPager.setAdapter(new PagerAdapter(getChildFragmentManager()));
-        viewPager.setCurrentItem(0);
+
 
 //        setChart();
-//        MarkerView markerView = new MarkerView(getActivity(), R.layout.markerview);
-//        markerView.setChartView(barChart);
-//        barChart.setMarker(markerView);
+
         return view;
     }
 
-    @Override
-    public void onStart() {
-        super.onStart();
+
+
+
+    private void showYearPicker(){
+
+        final Dialog yearDialog = new Dialog(getContext());
+
+
+
+        yearDialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
+        yearDialog.setContentView(R.layout.year_picker);
+
+
+        Button confirm_btn = (Button) yearDialog.findViewById(R.id.confirm_btn);
+        Button cencel_btn = (Button) yearDialog.findViewById(R.id.cancel_btn);
+
+        numberPicker = (NumberPicker) yearDialog.findViewById(R.id.picker_year);
+        numberPicker.setMinValue(2020);
+        numberPicker.setMaxValue(3000);
+        numberPicker.setDescendantFocusability(NumberPicker.FOCUS_BLOCK_DESCENDANTS);
+        setDividerColor(numberPicker,Color.WHITE);
+        numberPicker.setWrapSelectorWheel(false);
+        numberPicker.setValue(year);
+        numberPicker.setOnValueChangedListener(new NumberPicker.OnValueChangeListener() {
+            @Override
+            public void onValueChange(NumberPicker numberPicker, int i, int i1) {
+
+            }
+        });
+
+        confirm_btn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                yearText.setText(String.valueOf(numberPicker.getValue()));
+                yearDialog.dismiss();
+            }
+        });
+
+        cencel_btn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                yearDialog.dismiss();
+            }
+        });
+
+        yearDialog.show();
     }
 
-    @Override
-    public void onStop() {
-        super.onStop();
-    }
+    private void setDividerColor(NumberPicker picker, int color) {
 
-    @Override
-    public void onSaveInstanceState(@NonNull Bundle outState) {
-        super.onSaveInstanceState(outState);
-    }
+        java.lang.reflect.Field[] pickerFields = NumberPicker.class.getDeclaredFields();
+        for (java.lang.reflect.Field pf : pickerFields) {
+            if (pf.getName().equals("mSelectionDivider")) {
+                pf.setAccessible(true);
+                try {
 
-    @Override
-    public void onResume() {
-        super.onResume();
-    }
-
-    @Override
-    public void onPause() {
-        super.onPause();
-    }
-
-    @Override
-    public void onLowMemory() {
-        super.onLowMemory();
-    }
-
-    @Override
-    public void onDestroy() {
-        super.onDestroy();
-    }
-
-    private class PagerAdapter extends FragmentPagerAdapter{
-
-        public PagerAdapter(@NonNull FragmentManager fm) {
-            super(fm);
-            getItem(0);
-        }
-
-        @NonNull
-        @Override
-        public Fragment getItem(int position) {
-            if(position == 0){
-                return chart_fragment1;
-            }else if(position == 1){
-                return chart_fragment2;
-            }else if(position == 2){
-                return chart_fragment3;
-            }else{
-                return chart_fragment4;
+                    ColorDrawable colorDrawable = new ColorDrawable(color);
+                    pf.set(picker, colorDrawable);
+                } catch (IllegalArgumentException e) {
+                    e.printStackTrace();
+                } catch (Resources.NotFoundException e) {
+                    e.printStackTrace();
+                }
+                catch (IllegalAccessException e) {
+                    e.printStackTrace();
+                }
+                break;
             }
         }
+    }
 
-        @Override
-        public int getCount() {
-            return 4;
+
+
+
+        public void setChart(){
+        List<BarEntry>  incomeEntries = getIncomeEntries();
+        List<BarEntry>   expenseEntries = getExpenseEntries();
+
+        dataSets = new ArrayList<>();
+        BarDataSet set1, set2;
+
+        set1 = new BarDataSet(incomeEntries, "수입");
+        set1.setColor(Color.rgb(74,168,216));
+        set1.setValueTextColor(Color.rgb(55,70,73));
+        set1.setValueTextSize(10f);
+
+        set2 = new BarDataSet(expenseEntries, "지출");
+        set2.setColor(Color.rgb(241,107,72));
+        set2.setValueTextColor(Color.rgb(55,70,73));
+        set2.setValueTextSize(10f);
+
+        dataSets.add(set1);
+        dataSets.add(set2);
+
+        BarData data = new BarData(dataSets);
+        barChart.setData(data);
+        barChart.getAxisLeft().setAxisMinimum(0);
+
+        barChart.getDescription().setEnabled(false);
+        barChart.getAxisRight().setAxisMinimum(0);
+        barChart.setDrawBarShadow(false);
+        barChart.setDrawValueAboveBar(true);
+        barChart.setMaxVisibleValueCount(12);
+        barChart.setPinchZoom(false);
+        barChart.setDrawGridBackground(false);
+        barChart.setScaleEnabled(false);
+
+
+
+        Legend l = barChart.getLegend();
+        l.setWordWrapEnabled(true);
+        l.setTextSize(15);
+        l.setFormSize(15);
+        l.setVerticalAlignment(Legend.LegendVerticalAlignment.TOP);
+        l.setHorizontalAlignment(Legend.LegendHorizontalAlignment.LEFT);
+        l.setOrientation(Legend.LegendOrientation.VERTICAL);
+        l.setDrawInside(false);
+        l.setForm(Legend.LegendForm.LINE);
+
+        XAxis xAxis = barChart.getXAxis();
+        xAxis.setLabelCount(xAxisValues.size()+1, true);
+        xAxis.setGranularity(1f);
+        xAxis.setCenterAxisLabels(true);
+        xAxis.setDrawGridLines(false);
+//        xAxis.setTextSize(12);
+        xAxis.setPosition(XAxis.XAxisPosition.BOTTOM);
+        xAxis.setAxisMaximum(getIncomeEntries().size());
+
+        barChart.getXAxis().setValueFormatter(new IndexAxisValueFormatter(xAxisValues));
+
+        YAxis yAxis = barChart.getAxisLeft();
+        yAxis.removeAllLimitLines();
+        yAxis.setTypeface(Typeface.DEFAULT);
+        yAxis.setPosition(YAxis.YAxisLabelPosition.OUTSIDE_CHART);
+        yAxis.setTextColor(Color.BLACK);
+        yAxis.setDrawGridLines(false);
+        barChart.getAxisRight().setEnabled(false);
+
+        setBarWidth(data);
+        barChart.invalidate();
+
+
+        barChart.setOnChartGestureListener(new OnChartGestureListener() {
+            @Override  //터치 제스처가 차트에서 시작되면 콜백
+            public void onChartGestureStart(MotionEvent me, ChartTouchListener.ChartGesture lastPerformedGesture) {
+
+            }
+
+            @Override  //터치 제스처가 차트에서 끝났을때의 콜백
+            public void onChartGestureEnd(MotionEvent me, ChartTouchListener.ChartGesture lastPerformedGesture) {
+
+            }
+
+            @Override // 차트를 길게 누르면 콜백
+            public void onChartLongPressed(MotionEvent me) {
+
+            }
+
+            @Override //차트를 더블클릭 했을때 콜백
+            public void onChartDoubleTapped(MotionEvent me) {
+
+            }
+
+            @Override  //차트를 한번 누르면 콜백
+            public void onChartSingleTapped(MotionEvent me) {
+
+                float tappedX = me.getX();
+                float tappedY = me.getY();
+                MPPointD pointD = barChart.getTransformer(YAxis.AxisDependency.LEFT).getValuesByTouchPoint(tappedX, tappedY);
+               System.out.println("tapped at : " + pointD.x + ", " + pointD.y);
+
+            }
+
+            @Override  //콜백은 플링 제스처로 차트에 표시됩니다.
+            public void onChartFling(MotionEvent me1, MotionEvent me2, float velocityX, float velocityY) {
+
+            }
+
+            @Override //핀치 확대 / 축소 제스처를 통해 차트가 확대 / 축소 될 때의 콜백
+            public void onChartScale(MotionEvent me, float scaleX, float scaleY) {
+
+            }
+
+            @Override //드래그 동작을 통해 차트를 이동 / 번역 할 때의 콜백
+            public void onChartTranslate(MotionEvent me, float dX, float dY) {
+
+            }
+        });
+
+
+    }
+
+    private void setBarWidth(BarData barData){
+        if(dataSets.size() > 1){
+            float barSpace = 0.02f;
+            float groupSpace = 0.3f;
+            defaultBarWidth = (1 - groupSpace) / dataSets.size() - barSpace;
+            if(defaultBarWidth >= 0){
+                barData.setBarWidth(defaultBarWidth);
+            }else {
+//                Toast.makeText(getContext(), "Defalut Barwidth" + defaultBarWidth, Toast.LENGTH_SHORT).show();
+                System.out.println("문제 발생");
+            }
+            int groupCount = getIncomeEntries().size();
+            if (groupCount != -1){
+                barChart.getXAxis().setAxisMinimum(0);
+                barChart.getXAxis().setAxisMaximum(0 + barChart.getBarData().getGroupWidth(groupSpace, barSpace) * groupCount);
+                barChart.getXAxis().setCenterAxisLabels(true);
+            }else{
+                System.out.println("문제 발생");
+//                Toast.makeText(getContext(), "no of bar groups is " + groupCount, Toast.LENGTH_SHORT).show();
+            }
+            barChart.groupBars(0,groupSpace,barSpace);
+            barChart.invalidate();
         }
     }
 
-//    private void showYearPicker(){
-//        Calendar calendar = Calendar.getInstance();
-//        final int year = calendar.get(calendar.YEAR);
-//
-//        final Dialog yearDialog = new Dialog(getActivity());
-//        yearDialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
-//        yearDialog.setContentView(R.layout.year_picker);
-//
-//        Button confirm_btn = (Button) view.findViewById(R.id.confirm_btn);
-//        Button cancel_btn = (Button) view.findViewById(R.id.cancel_btn);
-//
-//        final NumberPicker numberPicker = (NumberPicker) yearDialog.findViewById(R.id.picker_year);
-//        numberPicker.setMinValue(year - 100);
-//        numberPicker.setMaxValue(year - 15);
-//        numberPicker.setDescendantFocusability(NumberPicker.FOCUS_BLOCK_DESCENDANTS);
-//
-//        numberPicker.setWrapSelectorWheel(false);
-//        numberPicker.setValue(year - 20);
-//        numberPicker.setOnValueChangedListener(new NumberPicker.OnValueChangeListener() {
-//            @Override
-//            public void onValueChange(NumberPicker numberPicker, int i, int i1) {
-//
-//            }
-//        });
-//
-//        confirm_btn.setOnClickListener(new View.OnClickListener() {
-//            @Override
-//            public void onClick(View view) {
-//                yearBtn.setText(String.valueOf(numberPicker.getValue()));
-//                yearDialog.dismiss();
-//            }
-//        });
-//
-//        cancel_btn.setOnClickListener(new View.OnClickListener() {
-//            @Override
-//            public void onClick(View view) {
-//                yearDialog.dismiss();
-//            }
-//        });
-//
-//        yearDialog.show();
-//
-//    }
+    private List<BarEntry> getIncomeEntries(){ //수입
+        int count;
+        ArrayList<BarEntry> incomeEntries = new ArrayList<>();
+        for( count= 0; count <money.size(); count++) {
+                incomeEntries.add(new BarEntry(count+1, money.get(count)));
 
-    //    public void setChart(){
-//        List<BarEntry>  incomeEntries = getIncomeEntries();
-//        List<BarEntry>   expenseEntries = getExpenseEntries();
-//
-//        dataSets = new ArrayList<>();
-//        BarDataSet set1, set2;
-//
-//        set1 = new BarDataSet(incomeEntries, "수입");
-//        set1.setColor(Color.rgb(74,168,216));
-//        set1.setValueTextColor(Color.rgb(55,70,73));
-//        set1.setValueTextSize(10f);
-//
-//        set2 = new BarDataSet(expenseEntries, "지출");
-//        set2.setColor(Color.rgb(241,107,72));
-//        set2.setValueTextColor(Color.rgb(55,70,73));
-//        set2.setValueTextSize(10f);
-//
-//        dataSets.add(set1);
-//        dataSets.add(set2);
-//
-//        BarData data = new BarData(dataSets);
-//        barChart.setData(data);
-//        barChart.getAxisLeft().setAxisMinimum(0);
-//
-//        barChart.getDescription().setEnabled(false);
-//        barChart.getAxisRight().setAxisMinimum(0);
-//        barChart.setDrawBarShadow(false);
-//        barChart.setDrawValueAboveBar(true);
-//        barChart.setMaxVisibleValueCount(12);
-//        barChart.setPinchZoom(false);
-//        barChart.setDrawGridBackground(false);
-//        barChart.setScaleEnabled(false);
-//
-//
-//
-//        Legend l = barChart.getLegend();
-//        l.setWordWrapEnabled(true);
-//        l.setTextSize(15);
-//        l.setFormSize(15);
-//        l.setVerticalAlignment(Legend.LegendVerticalAlignment.TOP);
-//        l.setHorizontalAlignment(Legend.LegendHorizontalAlignment.LEFT);
-//        l.setOrientation(Legend.LegendOrientation.VERTICAL);
-//        l.setDrawInside(false);
-//        l.setForm(Legend.LegendForm.LINE);
-//
-//        XAxis xAxis = barChart.getXAxis();
-//        xAxis.setLabelCount(xAxisValues.size()+1, true);
-//        xAxis.setGranularity(1f);
-//        xAxis.setCenterAxisLabels(true);
-//        xAxis.setDrawGridLines(false);
-////        xAxis.setTextSize(12);
-//        xAxis.setPosition(XAxis.XAxisPosition.BOTTOM);
-//        xAxis.setAxisMaximum(getIncomeEntries().size());
-//
-//        barChart.getXAxis().setValueFormatter(new IndexAxisValueFormatter(xAxisValues));
-//
-//        YAxis yAxis = barChart.getAxisLeft();
-//        yAxis.removeAllLimitLines();
-//        yAxis.setTypeface(Typeface.DEFAULT);
-//        yAxis.setPosition(YAxis.YAxisLabelPosition.OUTSIDE_CHART);
-//        yAxis.setTextColor(Color.BLACK);
-//        yAxis.setDrawGridLines(false);
-//        barChart.getAxisRight().setEnabled(false);
-//
-//        setBarWidth(data);
-//        barChart.invalidate();
-//
-//
-//        barChart.setOnChartGestureListener(new OnChartGestureListener() {
-//            @Override  //터치 제스처가 차트에서 시작되면 콜백
-//            public void onChartGestureStart(MotionEvent me, ChartTouchListener.ChartGesture lastPerformedGesture) {
-//
-//            }
-//
-//            @Override  //터치 제스처가 차트에서 끝났을때의 콜백
-//            public void onChartGestureEnd(MotionEvent me, ChartTouchListener.ChartGesture lastPerformedGesture) {
-//
-//            }
-//
-//            @Override // 차트를 길게 누르면 콜백
-//            public void onChartLongPressed(MotionEvent me) {
-//
-//            }
-//
-//            @Override //차트를 더블클릭 했을때 콜백
-//            public void onChartDoubleTapped(MotionEvent me) {
-//
-//            }
-//
-//            @Override  //차트를 한번 누르면 콜백
-//            public void onChartSingleTapped(MotionEvent me) {
-//
-//                float tappedX = me.getX();
-//                float tappedY = me.getY();
-//                MPPointD pointD = barChart.getTransformer(YAxis.AxisDependency.LEFT).getValuesByTouchPoint(tappedX, tappedY);
-//               System.out.println("tapped at : " + pointD.x + ", " + pointD.y);
-//
-//            }
-//
-//            @Override  //콜백은 플링 제스처로 차트에 표시됩니다.
-//            public void onChartFling(MotionEvent me1, MotionEvent me2, float velocityX, float velocityY) {
-//
-//            }
-//
-//            @Override //핀치 확대 / 축소 제스처를 통해 차트가 확대 / 축소 될 때의 콜백
-//            public void onChartScale(MotionEvent me, float scaleX, float scaleY) {
-//
-//            }
-//
-//            @Override //드래그 동작을 통해 차트를 이동 / 번역 할 때의 콜백
-//            public void onChartTranslate(MotionEvent me, float dX, float dY) {
-//
-//            }
-//        });
-//
-//
-//    }
-//
-//    private void setBarWidth(BarData barData){
-//        if(dataSets.size() > 1){
-//            float barSpace = 0.02f;
-//            float groupSpace = 0.3f;
-//            defaultBarWidth = (1 - groupSpace) / dataSets.size() - barSpace;
-//            if(defaultBarWidth >= 0){
-//                barData.setBarWidth(defaultBarWidth);
-//            }else {
-////                Toast.makeText(getContext(), "Defalut Barwidth" + defaultBarWidth, Toast.LENGTH_SHORT).show();
-//                System.out.println("문제 발생");
-//            }
-//            int groupCount = getIncomeEntries().size();
-//            if (groupCount != -1){
-//                barChart.getXAxis().setAxisMinimum(0);
-//                barChart.getXAxis().setAxisMaximum(0 + barChart.getBarData().getGroupWidth(groupSpace, barSpace) * groupCount);
-//                barChart.getXAxis().setCenterAxisLabels(true);
-//            }else{
-//                System.out.println("문제 발생");
-////                Toast.makeText(getContext(), "no of bar groups is " + groupCount, Toast.LENGTH_SHORT).show();
-//            }
-//            barChart.groupBars(0,groupSpace,barSpace);
-//            barChart.invalidate();
-//        }
-//    }
-//
-//    private List<BarEntry> getIncomeEntries(){ //수입
-//        int count;
-//        ArrayList<BarEntry> incomeEntries = new ArrayList<>();
-//        for( count= 0; count <money.size(); count++) {
-//                incomeEntries.add(new BarEntry(count+1, money.get(count)));
-//
-//
-//        }
-//        return incomeEntries.subList(0, money.size());
-//    }
-//
-//    private List<BarEntry> getExpenseEntries(){ //지출
-//        int count;
-//        ArrayList<BarEntry> expenseEntries = new ArrayList<>();
-//        for(count = 0; count<minusMoney.size(); count++){
-//            expenseEntries.add(new BarEntry(count+1, minusMoney.get(count)));
-////            System.out.println( " count " + count +"+"+ minusMoney.get(count));
-//        }
-//
-//
-//        return expenseEntries.subList(0, minusMoney.size());
-//    }
+
+        }
+        return incomeEntries.subList(0, money.size());
+    }
+
+    private List<BarEntry> getExpenseEntries(){ //지출
+        int count;
+        ArrayList<BarEntry> expenseEntries = new ArrayList<>();
+        for(count = 0; count<minusMoney.size(); count++){
+            expenseEntries.add(new BarEntry(count+1, minusMoney.get(count)));
+//            System.out.println( " count " + count +"+"+ minusMoney.get(count));
+        }
+
+
+        return expenseEntries.subList(0, minusMoney.size());
+    }
 
 
 
