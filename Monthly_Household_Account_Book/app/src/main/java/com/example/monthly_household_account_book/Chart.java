@@ -77,10 +77,10 @@ public class Chart extends Fragment {
         //MainActivity의 메소드 사용하여 액션바 타이틀 변경.
         ((MainActivity) getActivity()).setActionBarTitle("월별 수입 / 지출 통계");
 
-        setChart();
-        MarkerView markerView = new MarkerView(getActivity(), R.layout.markerview);
-        markerView.setChartView(barChart);
-        barChart.setMarker(markerView);
+//        setChart();
+//        MarkerView markerView = new MarkerView(getActivity(), R.layout.markerview);
+//        markerView.setChartView(barChart);
+//        barChart.setMarker(markerView);
         return view;
     }
 
